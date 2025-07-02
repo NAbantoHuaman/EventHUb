@@ -1,4 +1,4 @@
-// Authentication Manager - Fixed with perfect registration sync
+// Authentication Manager 
 import { User } from './User.js';
 import { UserStorage, SessionStorage } from '../utils/storage.js';
 import { RegistrationManager } from '../utils/RegistrationManager.js';
@@ -61,7 +61,6 @@ export class AuthManager {
             if (session && SessionStorage.isSessionValid(this.sessionTimeout)) {
                 console.log('🔄 AuthManager: Valid session found for user:', session.userId);
                 
-                // ✅ CRITICAL: Always reload user data from storage
                 this.users = this.loadUsers();
                 const user = this.users.find(u => u.id === session.userId);
                 
@@ -69,7 +68,6 @@ export class AuthManager {
                     this.currentUser = user;
                     console.log('✅ AuthManager: User restored from session:', user.getFullName());
                     
-                    // ✅ CRITICAL FIX: Immediately sync registrations after session restore
                     this.syncUserRegistrations();
                     
                     return true;
@@ -90,7 +88,6 @@ export class AuthManager {
         }
     }
 
-    // ✅ CRITICAL FIX: New method to sync user registrations
     syncUserRegistrations() {
         if (!this.currentUser) return;
         
@@ -189,10 +186,8 @@ export class AuthManager {
             user.updateLastLogin();
             this.currentUser = user;
             
-            // ✅ CRITICAL FIX: Sync registrations immediately after login
             this.syncUserRegistrations();
             
-            // ✅ CRITICAL: Save updated user data and session
             const saved = this.saveUsers();
             if (saved) {
                 this.saveSession(user);
@@ -317,7 +312,6 @@ export class AuthManager {
     }
 
     getCurrentUser() {
-        // ✅ CRITICAL FIX: Always ensure registrations are synced
         if (this.currentUser) {
             this.syncUserRegistrations();
         }
@@ -331,7 +325,6 @@ export class AuthManager {
     getUserById(userId) {
         console.log('🔄 AuthManager: Getting user by ID from storage:', userId);
         
-        // ✅ CRITICAL: Always get fresh data from storage
         const userData = UserStorage.getUserById(userId);
         if (userData) {
             console.log(`✅ AuthManager: User found: ${userData.firstName} ${userData.lastName}`);
@@ -389,7 +382,6 @@ export class AuthManager {
         return remaining > 0 && remaining <= threshold;
     }
 
-    // ✅ CRITICAL: Registration system using RegistrationManager
     registerUserForEvent(eventId) {
         if (!this.currentUser) {
             console.error('❌ AuthManager: No current user for registration');
@@ -399,13 +391,11 @@ export class AuthManager {
         console.log('🔄 AuthManager: Registering user for event:', eventId);
         console.log('📊 AuthManager: User:', this.currentUser.getFullName(), 'ID:', this.currentUser.id);
         
-        // ✅ CRITICAL: Use dedicated registration manager
         const success = this.registrationManager.addRegistration(this.currentUser.id, eventId);
         
         if (success) {
             console.log('✅ AuthManager: Registration successful');
             
-            // ✅ CRITICAL FIX: Immediately sync after registration
             this.syncUserRegistrations();
             
             return true;
@@ -424,13 +414,11 @@ export class AuthManager {
         console.log('🔄 AuthManager: Unregistering user from event:', eventId);
         console.log('📊 AuthManager: User:', this.currentUser.getFullName(), 'ID:', this.currentUser.id);
         
-        // ✅ CRITICAL: Use dedicated registration manager
         const success = this.registrationManager.removeRegistration(this.currentUser.id, eventId);
         
         if (success) {
             console.log('✅ AuthManager: Unregistration successful');
             
-            // ✅ CRITICAL FIX: Immediately sync after unregistration
             this.syncUserRegistrations();
             
             return true;
@@ -443,11 +431,9 @@ export class AuthManager {
     isUserRegisteredForEvent(eventId) {
         if (!this.currentUser) return false;
         
-        // ✅ CRITICAL: Use dedicated registration manager
         return this.registrationManager.isUserRegistered(this.currentUser.id, eventId);
     }
 
-    // ✅ CRITICAL: Get user registrations from new system
     getUserRegistrations() {
         if (!this.currentUser) {
             console.log('ℹ️ AuthManager: No current user, returning empty registrations');
@@ -456,11 +442,9 @@ export class AuthManager {
         
         console.log('🔄 AuthManager: Getting registrations for user:', this.currentUser.id);
         
-        // ✅ CRITICAL FIX: Always get fresh data from RegistrationManager
         const registrations = this.registrationManager.getUserRegistrations(this.currentUser.id);
         console.log('📊 AuthManager: Found registrations:', registrations.length);
         
-        // ✅ CRITICAL FIX: Update user object for compatibility
         this.currentUser.eventsRegistered = registrations;
         
         return registrations;
@@ -478,7 +462,6 @@ export class AuthManager {
         return false;
     }
 
-    // ✅ CRITICAL: Debug method
     debugCurrentUser() {
         console.log('🔍 AuthManager: DEBUG - Current user state');
         if (this.currentUser) {

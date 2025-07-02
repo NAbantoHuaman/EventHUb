@@ -1,4 +1,4 @@
-// Sidebar Manager Component - Redesigned
+// Sidebar Manager Component 
 export class SidebarManager {
     constructor() {
         this.isExpanded = false;

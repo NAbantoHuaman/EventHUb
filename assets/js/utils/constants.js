@@ -8,7 +8,7 @@ export const APP_CONFIG = {
 export const STORAGE_KEYS = {
     users: 'eventhub_users',
     session: 'eventhub_session',
-    registrations: 'eventhub_registrations', // ✅ NEW: Dedicated registration storage
+    registrations: 'eventhub_registrations', 
     preferences: 'eventhub_preferences'
 };
 

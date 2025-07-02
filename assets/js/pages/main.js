@@ -1,4 +1,4 @@
-// Main Application Entry Point - CORRECCIÓN CRÍTICA del flujo de carga
+// Centro principal
 import { AuthManager } from '../components/AuthManager.js';
 import { EventManager } from '../components/EventManager.js';
 import { UIManager } from '../components/UIManager.js';
@@ -28,7 +28,6 @@ class MainApp {
     async init() {
         console.log('🚀 MainApp: Initializing...');
         
-        // ✅ CRÍTICO: Orden correcto de inicialización
         await this.waitForAuthManager();
         this.setupEventListeners();
         await this.loadInitialData();
@@ -40,7 +39,6 @@ class MainApp {
         console.log('📊 MainApp: Final user registrations:', this.userRegistrations);
     }
 
-    // ✅ CRÍTICO: Esperar a que AuthManager esté completamente listo
     async waitForAuthManager() {
         return new Promise((resolve) => {
             // Dar tiempo al AuthManager para procesar la sesión completamente
@@ -174,11 +172,9 @@ class MainApp {
         });
     }
 
-    // ✅ CRÍTICO: Carga de datos con orden correcto y verificación
     async loadInitialData() {
         console.log('🔄 MainApp: Loading initial data...');
         
-        // ✅ CRÍTICO: Primero cargar registraciones del usuario
         await this.loadUserRegistrations();
         
         // Luego cargar opciones de filtros
@@ -195,7 +191,6 @@ class MainApp {
         console.log('📊 MainApp: Registration IDs:', this.userRegistrations);
     }
 
-    // ✅ CRÍTICO: Método dedicado para cargar registraciones con verificación completa
     async loadUserRegistrations() {
         console.log('🔄 MainApp: Loading user registrations...');
         
@@ -203,11 +198,9 @@ class MainApp {
         if (user) {
             console.log('✅ MainApp: User found:', user.getFullName());
             
-            // ✅ CRÍTICO: Obtener registraciones directamente del RegistrationManager
             this.userRegistrations = this.registrationManager.getUserRegistrations(user.id);
             console.log('📊 MainApp: Direct registrations from RegistrationManager:', this.userRegistrations.length);
             
-            // ✅ CRÍTICO: Verificar que cada registro corresponde a un evento existente
             const allEvents = this.eventManager.getAllEvents();
             const validRegistrations = [];
             
@@ -229,7 +222,6 @@ class MainApp {
             this.userRegistrations = [];
         }
         
-        // ✅ CRÍTICO: Verificación final
         console.log('🔍 MainApp: Final user registrations verification:');
         this.userRegistrations.forEach((regId, index) => {
             console.log(`📊 Registration ${index + 1}: ${regId}`);
@@ -318,12 +310,10 @@ class MainApp {
             title.textContent = tab === 'all' ? 'Eventos disponibles' : 'Mis inscripciones';
         }
         
-        // ✅ CRÍTICO: NO recargar registraciones al cambiar tab, usar las ya cargadas
         this.renderEvents();
         this.updateTabCounts();
     }
 
-    // ✅ CRÍTICO: Renderizado con verificación completa de estado de inscripción
     renderEvents() {
         console.log('🔄 MainApp: Rendering events for tab:', this.currentTab);
         console.log('📊 MainApp: Current user registrations:', this.userRegistrations);
@@ -374,12 +364,10 @@ class MainApp {
             eventsGrid.style.display = 'grid';
             noEventsDiv.style.display = 'none';
             
-            // ✅ CRÍTICO: Verificación exhaustiva del estado de inscripción para cada evento
             eventsGrid.innerHTML = events.map(event => {
                 const isRegistered = this.userRegistrations.includes(event.id);
                 console.log(`📊 MainApp: Rendering event "${event.name}" (${event.id}): registered = ${isRegistered}`);
                 
-                // ✅ CRÍTICO: Verificación adicional para debug
                 if (isRegistered) {
                     console.log(`✅ MainApp: Event ${event.id} IS REGISTERED - should show registered state`);
                 } else {
@@ -485,7 +473,6 @@ class MainApp {
             return;
         }
         
-        // ✅ CRÍTICO: Verificación en tiempo real del estado de inscripción
         const isRegistered = this.userRegistrations.includes(eventId);
         console.log(`📊 MainApp: Modal for event ${eventId}: registered = ${isRegistered}`);
         console.log(`🔍 MainApp: Current registrations:`, this.userRegistrations);
@@ -493,7 +480,6 @@ class MainApp {
         this.modalManager.openEventModal(event, isRegistered, this.authManager);
     }
 
-    // ✅ CRÍTICO: Registro con actualización inmediata y verificación
     registerForEvent(eventId) {
         console.log('🔄 MainApp: Registering for event:', eventId);
         
@@ -528,14 +514,12 @@ class MainApp {
         
         console.log('🔄 MainApp: Starting registration process...');
         
-        // ✅ CRÍTICO: Registro directo en RegistrationManager
         const user = this.authManager.getCurrentUser();
         const success = this.registrationManager.addRegistration(user.id, eventId);
         
         if (success) {
             console.log('✅ MainApp: Registration successful in RegistrationManager');
             
-            // ✅ CRÍTICO: Actualización inmediata de la lista local
             this.userRegistrations.push(eventId);
             console.log('✅ MainApp: Updated local registrations:', this.userRegistrations);
             
@@ -544,7 +528,6 @@ class MainApp {
             
             this.notificationManager.success(`Te has inscrito exitosamente en "${event.name}"`);
             
-            // ✅ CRÍTICO: Re-renderizar inmediatamente para mostrar el cambio
             this.updateStats();
             this.updateTabCounts();
             this.renderEvents();
@@ -557,7 +540,6 @@ class MainApp {
         }
     }
 
-    // ✅ CRÍTICO: Desinscripción con actualización inmediata y verificación
     unregisterFromEvent(eventId) {
         console.log('🔄 MainApp: Unregistering from event:', eventId);
         
@@ -578,14 +560,12 @@ class MainApp {
         
         console.log('🔄 MainApp: Starting unregistration process...');
         
-        // ✅ CRÍTICO: Desinscripción directa en RegistrationManager
         const user = this.authManager.getCurrentUser();
         const success = this.registrationManager.removeRegistration(user.id, eventId);
         
         if (success) {
             console.log('✅ MainApp: Unregistration successful in RegistrationManager');
             
-            // ✅ CRÍTICO: Actualización inmediata de la lista local
             const index = this.userRegistrations.indexOf(eventId);
             if (index > -1) {
                 this.userRegistrations.splice(index, 1);
@@ -597,7 +577,6 @@ class MainApp {
             
             this.notificationManager.success(`Te has desinscrito de "${event.name}"`);
             
-            // ✅ CRÍTICO: Re-renderizar inmediatamente para mostrar el cambio
             this.updateStats();
             this.updateTabCounts();
             this.renderEvents();
@@ -623,7 +602,6 @@ class MainApp {
         }
     }
 
-    // ✅ CRÍTICO: Debug method mejorado
     debugApp() {
         console.log('🔍 MainApp: DEBUG - Full app state');
         console.log('📊 Current tab:', this.currentTab);
@@ -681,7 +659,6 @@ window.unregisterFromEvent = (eventId) => {
     }
 };
 
-// ✅ CRÍTICO: Global debug function
 window.debugApp = () => {
     if (window.mainApp) {
         window.mainApp.debugApp();

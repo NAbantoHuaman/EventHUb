@@ -1,4 +1,4 @@
-// UI Manager Component - CORRECCIÓN CRÍTICA para mostrar estado correcto
+// UI Manager Component 
 import { createElement, addClass, removeClass, toggleClass } from '../utils/helpers.js';
 import { formatDate, formatPrice } from '../utils/helpers.js';
 
@@ -8,7 +8,6 @@ export class UIManager {
         this.activeTab = 'all';
     }
 
-    // ✅ CRÍTICO: Event Card Creation con verificación exhaustiva del estado
     createEventCard(event, isRegistered = false) {
         console.log(`🎨 UIManager: Creating card for event "${event.name}" (${event.id})`);
         console.log(`📊 UIManager: isRegistered parameter: ${isRegistered}`);
@@ -17,10 +16,8 @@ export class UIManager {
         const isFull = event.registered >= event.capacity;
         const progressPercentage = (event.registered / event.capacity) * 100;
 
-        // ✅ CRÍTICO: Log del estado para debug
         console.log(`📊 UIManager: Event state - isPast: ${isPast}, isFull: ${isFull}, isRegistered: ${isRegistered}`);
 
-        // ✅ CRÍTICO: Determinar badge correcto
         let statusBadge;
         if (isPast) {
             statusBadge = '<span class="badge badge-past">Finalizado</span>';
@@ -34,7 +31,6 @@ export class UIManager {
             console.log(`📊 UIManager: Event ${event.id} will show AVAILABLE badge`);
         }
 
-        // ✅ CRÍTICO: Determinar botones de acción correctos
         let actionButtons = '';
         if (isPast) {
             actionButtons = `

@@ -1,4 +1,4 @@
-// Profile Page JavaScript - Sistema completo de perfil de usuario
+//Sistema de perfil de usuario
 import { AuthManager } from '../components/AuthManager.js';
 import { EventManager } from '../components/EventManager.js';
 import { NotificationManager } from '../components/NotificationManager.js';

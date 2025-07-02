@@ -1,4 +1,4 @@
-// ✅ CRITICAL: New Registration Manager - Single source of truth for all registrations
+// Registration Manager 
 export class RegistrationManager {
     constructor() {
         this.STORAGE_KEY = 'eventhub_registrations';
@@ -11,7 +11,6 @@ export class RegistrationManager {
         console.log('✅ RegistrationManager: Initialized');
     }
 
-    // ✅ CRITICAL: Ensure storage structure exists
     ensureStorageExists() {
         const existing = localStorage.getItem(this.STORAGE_KEY);
         if (!existing) {
@@ -27,7 +26,6 @@ export class RegistrationManager {
         }
     }
 
-    // ✅ CRITICAL: Get all registrations from storage
     getAllRegistrations() {
         try {
             const data = localStorage.getItem(this.STORAGE_KEY);
@@ -45,7 +43,6 @@ export class RegistrationManager {
         }
     }
 
-    // ✅ CRITICAL: Get registrations for specific user
     getUserRegistrations(userId) {
         console.log('🔍 RegistrationManager: Getting registrations for user:', userId);
         const allRegistrations = this.getAllRegistrations();
@@ -55,7 +52,6 @@ export class RegistrationManager {
         return userRegistrations;
     }
 
-    // ✅ CRITICAL: Save all registrations to storage
     saveAllRegistrations(registrations) {
         try {
             console.log('💾 RegistrationManager: Saving registrations for', Object.keys(registrations).length, 'users');
@@ -71,7 +67,6 @@ export class RegistrationManager {
             const serialized = JSON.stringify(data);
             localStorage.setItem(this.STORAGE_KEY, serialized);
             
-            // ✅ CRITICAL: Immediate verification
             const verification = localStorage.getItem(this.STORAGE_KEY);
             if (verification === serialized) {
                 console.log('✅ RegistrationManager: Save successful and verified');
@@ -86,7 +81,6 @@ export class RegistrationManager {
         }
     }
 
-    // ✅ CRITICAL: Add registration for user
     addRegistration(userId, eventId) {
         console.log('➕ RegistrationManager: Adding registration - User:', userId, 'Event:', eventId);
         
@@ -112,7 +106,6 @@ export class RegistrationManager {
         const saved = this.saveAllRegistrations(allRegistrations);
         
         if (saved) {
-            // ✅ CRITICAL: Double verification
             const verifyRegistrations = this.getUserRegistrations(userId);
             if (verifyRegistrations.includes(eventId)) {
                 console.log('✅ RegistrationManager: Registration added and verified');
@@ -126,7 +119,6 @@ export class RegistrationManager {
         return false;
     }
 
-    // ✅ CRITICAL: Remove registration for user
     removeRegistration(userId, eventId) {
         console.log('➖ RegistrationManager: Removing registration - User:', userId, 'Event:', eventId);
         
@@ -151,7 +143,6 @@ export class RegistrationManager {
         const saved = this.saveAllRegistrations(allRegistrations);
         
         if (saved) {
-            // ✅ CRITICAL: Double verification
             const verifyRegistrations = this.getUserRegistrations(userId);
             if (!verifyRegistrations.includes(eventId)) {
                 console.log('✅ RegistrationManager: Registration removed and verified');
@@ -165,7 +156,6 @@ export class RegistrationManager {
         return false;
     }
 
-    // ✅ CRITICAL: Check if user is registered for event
     isUserRegistered(userId, eventId) {
         const userRegistrations = this.getUserRegistrations(userId);
         const isRegistered = userRegistrations.includes(eventId);
@@ -173,7 +163,6 @@ export class RegistrationManager {
         return isRegistered;
     }
 
-    // ✅ CRITICAL: Get registration count for event
     getEventRegistrationCount(eventId) {
         const allRegistrations = this.getAllRegistrations();
         let count = 0;
@@ -188,7 +177,6 @@ export class RegistrationManager {
         return count;
     }
 
-    // ✅ CRITICAL: Debug method
     debugRegistrations() {
         console.log('🔍 RegistrationManager: DEBUG - Full registration state');
         console.log('📊 Storage key:', this.STORAGE_KEY);
@@ -212,7 +200,6 @@ export class RegistrationManager {
         }
     }
 
-    // ✅ CRITICAL: Clear all registrations (for testing)
     clearAllRegistrations() {
         console.log('🗑️ RegistrationManager: Clearing all registrations');
         localStorage.removeItem(this.STORAGE_KEY);

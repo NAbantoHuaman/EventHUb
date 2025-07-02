@@ -14,7 +14,7 @@ export function formatDate(dateString, options = {}) {
 }
 
 export function formatPrice(price) {
-    return price === 0 ? 'Gratis' : `$${price.toLocaleString()}`;
+    return price === 0 ? 'Gratis' : `${price.toLocaleString()}`;
 }
 
 export function generateId(prefix = '') {
