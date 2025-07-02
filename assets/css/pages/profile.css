@@ -1,4 +1,4 @@
-/* Profile Page */
+/* Página de Perfil */
 .profile-header {
     background: white;
     border-radius: 0.75rem;
@@ -8,6 +8,7 @@
     overflow: hidden;
 }
 
+/* Banner de perfil */
 .profile-banner {
     background: linear-gradient(135deg, #1e40af 0%, #3b82f6 25%, #60a5fa 50%, #93c5fd 75%, #dbeafe 100%);
     padding: 2rem;
@@ -41,6 +42,7 @@
     pointer-events: none;
 }
 
+/* Información de perfil */
 .profile-info {
     display: flex;
     align-items: flex-end;
@@ -49,10 +51,12 @@
     z-index: 2;
 }
 
+/* Contenedor del avatar */
 .profile-avatar-container {
     position: relative;
 }
 
+/* Avatar de perfil */
 .profile-avatar {
     width: 6rem;
     height: 6rem;
@@ -75,6 +79,7 @@
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2), 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
+/* Botón para editar avatar */
 .avatar-edit-btn {
     position: absolute;
     bottom: 0;
@@ -104,6 +109,7 @@
     outline-offset: 2px;
 }
 
+/* Detalles de perfil */
 .profile-details {
     color: white;
     position: relative;
@@ -126,6 +132,7 @@
     color: #f1f5f9;
 }
 
+/* Estadísticas de perfil */
 .profile-stats {
     display: flex;
     gap: 2rem;
@@ -164,7 +171,7 @@
     font-weight: 500;
 }
 
-/* Profile Tabs */
+/* Pestañas de perfil */
 .profile-tabs {
     display: flex;
     gap: 2rem;
@@ -223,7 +230,7 @@
     border-radius: 4px;
 }
 
-/* Tab Content */
+/* Contenido de pestañas */
 .tab-content {
     min-height: 24rem;
     background: white;
@@ -245,7 +252,7 @@
     transform: translateY(0);
 }
 
-/* Profile Cards */
+/* Tarjetas de perfil */
 .profile-card {
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     border-radius: 0.75rem;
@@ -290,7 +297,7 @@
     border-radius: 2px;
 }
 
-/* Upcoming Events */
+/* Próximos eventos */
 .upcoming-events-list {
     display: flex;
     flex-direction: column;
@@ -361,7 +368,7 @@
     color: #64748b;
 }
 
-/* Activity List */
+/* Lista de actividad */
 .activity-list {
     display: flex;
     flex-direction: column;
@@ -416,7 +423,7 @@
     color: #6b7280;
 }
 
-/* Categories List */
+/* Lista de categorías */
 .categories-list {
     display: flex;
     flex-wrap: wrap;
@@ -442,7 +449,7 @@
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
-/* Events Filter */
+/* Filtro de eventos */
 .events-filter {
     margin-bottom: 1rem;
 }
@@ -464,7 +471,7 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Settings Forms */
+/* Formularios de configuración */
 .settings-card {
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     border-radius: 0.75rem;
@@ -550,7 +557,7 @@
     background: #ffffff;
 }
 
-/* Switch toggles */
+/* Switches personalizados */
 .switch-label {
     display: flex;
     align-items: center;
@@ -604,7 +611,7 @@
     background: #ffffff;
 }
 
-/* Danger Zone */
+/* Zona de peligro */
 .danger-zone {
     border-color: #fecaca !important;
     background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
@@ -628,13 +635,13 @@
     margin-bottom: 1rem;
 }
 
-/* Danger Actions */
+/* Acciones de peligro */
 .danger-actions {
     display: flex;
     gap: 0.75rem;
 }
 
-/* Empty States */
+/* Estados vacíos */
 .empty-state {
     text-align: center;
     padding: 2rem;
@@ -669,7 +676,7 @@
     color: #64748b;
 }
 
-/* Event Cards in Profile */
+/* Tarjetas de evento en perfil */
 .event-card {
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     border-radius: 0.75rem;
@@ -695,7 +702,7 @@
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15), 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive Profile */
+/* Perfil responsivo */
 @media (max-width: 768px) {
     .profile-banner {
         flex-direction: column;
@@ -789,7 +796,7 @@
     }
 }
 
-/* High contrast mode support */
+/* Soporte para alto contraste */
 @media (prefers-contrast: high) {
     .profile-banner {
         background: #000000;
@@ -808,7 +815,7 @@
     }
 }
 
-/* Reduced motion support */
+/* Soporte para reducción de movimiento */
 @media (prefers-reduced-motion: reduce) {
     .profile-card,
     .upcoming-event-item,

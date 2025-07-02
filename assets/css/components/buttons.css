@@ -1,4 +1,4 @@
-/* Button Components */
+/* Componentes de Botones */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -16,23 +16,27 @@
     font-family: inherit;
 }
 
+/* Enfoque accesible para botones */
 .btn:focus {
     outline: 2px solid var(--primary-600);
     outline-offset: 2px;
 }
 
+/* Botón primario */
 .btn-primary {
     background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
     color: white;
     box-shadow: var(--shadow-sm);
 }
 
+/* Hover para botón primario */
 .btn-primary:hover:not(:disabled) {
     background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%);
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
 }
 
+/* Botón secundario */
 .btn-secondary {
     background: white;
     color: var(--neutral-700);
@@ -40,24 +44,28 @@
     box-shadow: var(--shadow-sm);
 }
 
+/* Hover para botón secundario */
 .btn-secondary:hover {
     background: var(--neutral-50);
     border-color: var(--neutral-400);
     transform: translateY(-1px);
 }
 
+/* Botón de peligro */
 .btn-danger {
     background: linear-gradient(135deg, var(--error-600) 0%, var(--error-700) 100%);
     color: white;
     box-shadow: var(--shadow-sm);
 }
 
+/* Hover para botón de peligro */
 .btn-danger:hover {
     background: linear-gradient(135deg, var(--error-700) 0%, var(--error-800) 100%);
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
 }
 
+/* Estado deshabilitado */
 .btn:disabled {
     background: var(--neutral-300);
     color: var(--neutral-400);
@@ -66,16 +74,19 @@
     box-shadow: none;
 }
 
+/* Botón de ancho completo */
 .btn-full {
     width: 100%;
     justify-content: center;
     position: relative;
 }
 
+/* Texto del botón (para animaciones de carga) */
 .btn-text {
     transition: opacity 0.2s ease;
 }
 
+/* Loader dentro del botón */
 .btn-loader {
     position: absolute;
     top: 50%;
@@ -84,6 +95,7 @@
     display: none;
 }
 
+/* Spinner de carga */
 .spinner {
     width: 1rem;
     height: 1rem;
@@ -93,6 +105,13 @@
     animation: spin 1s linear infinite;
 }
 
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Ocultar texto y mostrar loader cuando está cargando */
 .btn.loading .btn-text {
     opacity: 0;
 }
@@ -101,7 +120,7 @@
     display: block;
 }
 
-/* Social Login Buttons */
+/* Botones para login social */
 .btn-social {
     display: flex;
     align-items: center;
@@ -120,6 +139,7 @@
     box-shadow: var(--shadow-sm);
 }
 
+/* Hover para login social */
 .btn-social:hover {
     background: var(--neutral-50);
     border-color: var(--neutral-400);
@@ -127,12 +147,13 @@
     box-shadow: var(--shadow-md);
 }
 
+/* Enfoque accesible para login social */
 .btn-social:focus {
     outline: 2px solid var(--primary-600);
     outline-offset: 2px;
 }
 
-/* Button sizes */
+/* Tamaños de botones */
 .btn-sm {
     padding: 0.5rem 0.75rem;
     font-size: 0.75rem;
@@ -143,30 +164,33 @@
     font-size: 1rem;
 }
 
-/* Button groups */
+/* Grupos de botones horizontales */
 .btn-group {
     display: flex;
     gap: 0.75rem;
 }
 
+/* Grupos de botones verticales */
 .btn-group-vertical {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-/* Button variants */
+/* Botón con borde primario */
 .btn-outline-primary {
     background: transparent;
     color: var(--primary-600);
     border: 1px solid var(--primary-600);
 }
 
+/* Hover para botón con borde primario */
 .btn-outline-primary:hover {
     background: var(--primary-600);
     color: white;
 }
 
+/* Botón fantasma */
 .btn-ghost {
     background: transparent;
     color: var(--neutral-600);
@@ -174,6 +198,7 @@
     box-shadow: none;
 }
 
+/* Hover para botón fantasma */
 .btn-ghost:hover {
     background: var(--neutral-100);
     color: var(--neutral-700);

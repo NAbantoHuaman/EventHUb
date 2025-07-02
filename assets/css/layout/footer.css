@@ -1,15 +1,17 @@
-/* Footer Layout */
+/* Diseño del Footer */
 .footer {
     background: white;
     border-top: 1px solid #e5e7eb;
     margin-top: 4rem;
 }
 
+/* Contenido del Footer */
 .footer-content {
     text-align: center;
     padding: 2rem 0;
 }
 
+/* Logo del Footer */
 .footer-logo {
     display: flex;
     align-items: center;
@@ -29,17 +31,20 @@
     color: #1f2937;
 }
 
+/* Texto del Footer */
 .footer-content p {
     color: #6b7280;
     font-size: 0.875rem;
     margin-bottom: 0.5rem;
 }
 
+/* Texto de tecnologías usadas */
 .footer-tech {
     font-size: 0.75rem !important;
     margin-top: 0.5rem !important;
 }
 
+/* Enlaces del Footer */
 .footer-links {
     display: flex;
     justify-content: center;
@@ -58,6 +63,7 @@
     color: #2563eb;
 }
 
+/* Redes sociales en el Footer */
 .footer-social {
     display: flex;
     justify-content: center;
@@ -82,7 +88,7 @@
     color: white;
 }
 
-/* Responsive footer */
+/* Footer responsivo */
 @media (max-width: 768px) {
     .footer-links {
         flex-direction: column;

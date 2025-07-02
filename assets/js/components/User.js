@@ -1,4 +1,4 @@
-// User Class - Enhanced
+// Clase Usuario - Mejorada
 import { generateId } from '../utils/helpers.js';
 
 export class User {
@@ -24,32 +24,39 @@ export class User {
         this.eventsRegistered = userData.eventsRegistered || []; 
     }
 
+    // Obtener nombre completo
     getFullName() {
         return `${this.firstName} ${this.lastName}`;
     }
 
+    // Obtener iniciales
     getInitials() {
         return `${this.firstName.charAt(0)}${this.lastName.charAt(0)}`.toUpperCase();
     }
 
+    // Actualizar último acceso
     updateLastLogin() {
         this.lastLogin = new Date().toISOString();
     }
 
+    // Actualizar preferencias del usuario
     updatePreferences(newPreferences) {
         this.preferences = { ...this.preferences, ...newPreferences };
     }
 
+    // Registrar usuario a un evento
     registerEvent(eventId) {
         if (!this.eventsRegistered.includes(eventId)) {
             this.eventsRegistered.push(eventId);
         }
     }
 
+    // Cancelar registro de usuario a un evento
     unregisterEvent(eventId) {
         this.eventsRegistered = this.eventsRegistered.filter(id => id !== eventId);
     }
 
+    // Obtener duración de membresía
     getMembershipDuration() {
         const createdDate = new Date(this.createdAt);
         const now = new Date();
@@ -60,11 +67,13 @@ export class User {
         return `${Math.floor(diffDays / 365)} año(s)`;
     }
 
+    // Verificar si es usuario nuevo
     isNewUser() {
         const diffDays = (new Date() - new Date(this.createdAt)) / (1000 * 60 * 60 * 24);
         return diffDays <= 7;
     }
 
+    // Obtener nivel de actividad
     getActivityLevel() {
         const count = this.eventsRegistered?.length || 0;
         if (count === 0) return 'Inactivo';
@@ -73,18 +82,22 @@ export class User {
         return 'Alto';
     }
 
+    // Puede recibir notificaciones
     canReceiveNotifications() {
         return this.preferences.emailNotifications && this.isActive;
     }
 
+    // Puede recibir recordatorios
     canReceiveReminders() {
         return this.preferences.eventReminders && this.isActive;
     }
 
+    // Puede recibir boletín
     canReceiveNewsletter() {
         return this.preferences.newsletter && this.isActive;
     }
 
+    // Convertir a JSON para guardar
     toJSON() {
         return {
             id: this.id,
@@ -103,6 +116,7 @@ export class User {
         };
     }
 
+    // Convertir a JSON público (sin datos sensibles)
     toPublicJSON() {
         return {
             id: this.id,
@@ -117,11 +131,12 @@ export class User {
         };
     }
 
+    // Crear usuario desde JSON
     static fromJSON(data) {
         return new User(data);
     }
 
-    // Validation
+    // Validación de datos de usuario
     static validateUserData(userData) {
         const errors = [];
 
@@ -151,16 +166,19 @@ export class User {
         };
     }
 
+    // Validar correo electrónico
     static isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
 
+    // Validar número de teléfono
     static isValidPhone(phone) {
         const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
         return phoneRegex.test(phone.replace(/\s/g, ''));
     }
 
+    // Buscar usuarios por texto
     static searchUsers(users, query) {
         const searchTerm = query.toLowerCase();
         return users.filter(user =>
@@ -170,10 +188,12 @@ export class User {
         );
     }
 
+    // Filtrar usuarios por nivel de actividad
     static filterUsersByActivity(users, activityLevel) {
         return users.filter(user => user.getActivityLevel() === activityLevel);
     }
 
+    // Ordenar usuarios por campo y orden
     static sortUsers(users, sortBy = 'name', order = 'asc') {
         return users.sort((a, b) => {
             let aValue, bValue;

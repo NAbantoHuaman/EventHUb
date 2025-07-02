@@ -1,8 +1,9 @@
-/* Grid Layout System */
+/* Sistema de Grid Layout */
 .grid {
     display: grid;
 }
 
+/* Columnas de grid */
 .grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
 }
@@ -35,6 +36,7 @@
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
 }
 
+/* Span de columnas */
 .col-span-1 {
     grid-column: span 1 / span 1;
 }
@@ -51,6 +53,7 @@
     grid-column: 1 / -1;
 }
 
+/* Span de filas */
 .row-span-1 {
     grid-row: span 1 / span 1;
 }
@@ -63,7 +66,7 @@
     grid-row: span 3 / span 3;
 }
 
-/* Specific grids */
+/* Grids específicos */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -132,18 +135,21 @@
     padding-right: 2.5rem;
 }
 
+/* Grid de eventos */
 .events-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 1.5rem;
 }
 
+/* Grid de perfil */
 .profile-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
 }
 
+/* Grid de configuración */
 .settings-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -151,7 +157,7 @@
     max-width: 48rem;
 }
 
-/* Responsive grids */
+/* Grids responsivos */
 @media (max-width: 1024px) {
     .grid-cols-4 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -190,7 +196,7 @@
     }
 }
 
-/* Flexbox alternatives */
+/* Alternativas con Flexbox */
 .flex-grid {
     display: flex;
     flex-wrap: wrap;
@@ -210,7 +216,7 @@
     min-width: 300px;
 }
 
-/* Container layouts */
+/* Contenedores principales */
 .main {
     padding: 2rem 0;
     min-height: calc(100vh - 200px);
@@ -238,7 +244,7 @@
     color: #6b7280;
 }
 
-/* Content areas */
+/* Áreas de contenido */
 .content-area {
     background: white;
     border-radius: 0.75rem;
@@ -258,6 +264,7 @@
     min-width: 0;
 }
 
+/* Layout de dos columnas */
 .two-column {
     display: grid;
     grid-template-columns: 1fr 16rem;

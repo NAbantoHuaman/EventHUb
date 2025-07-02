@@ -1,4 +1,4 @@
-// Authentication Manager 
+// Gestor de Autenticación 
 import { User } from './User.js';
 import { UserStorage, SessionStorage } from '../utils/storage.js';
 import { RegistrationManager } from '../utils/RegistrationManager.js';
@@ -22,10 +22,10 @@ export class AuthManager {
     loadUsers() {
         try {
             const usersData = UserStorage.getUsers();
-            console.log('🔄 AuthManager: Loading users from storage:', usersData.length);
+            console.log('🔄 AuthManager: Cargando usuarios desde almacenamiento:', usersData.length);
             return usersData.map(userData => new User(userData));
         } catch (error) {
-            console.error('❌ AuthManager: Error loading users:', error);
+            console.error('❌ AuthManager: Error al cargar usuarios:', error);
             return [];
         }
     }
@@ -33,10 +33,10 @@ export class AuthManager {
     saveUsers() {
         try {
             const usersData = this.users.map(user => user.toJSON());
-            console.log('🔄 AuthManager: Saving users to storage:', usersData.length);
+            console.log('🔄 AuthManager: Guardando usuarios en almacenamiento:', usersData.length);
             return UserStorage.setUsers(usersData);
         } catch (error) {
-            console.error('❌ AuthManager: Error saving users:', error);
+            console.error('❌ AuthManager: Error al guardar usuarios:', error);
             return false;
         }
     }
@@ -50,7 +50,7 @@ export class AuthManager {
             SessionStorage.setSession(session);
             return true;
         } catch (error) {
-            console.error('❌ AuthManager: Error saving session:', error);
+            console.error('❌ AuthManager: Error al guardar la sesión:', error);
             return false;
         }
     }
@@ -59,30 +59,30 @@ export class AuthManager {
         try {
             const session = SessionStorage.getSession();
             if (session && SessionStorage.isSessionValid(this.sessionTimeout)) {
-                console.log('🔄 AuthManager: Valid session found for user:', session.userId);
+                console.log('🔄 AuthManager: Sesión válida encontrada para el usuario:', session.userId);
                 
                 this.users = this.loadUsers();
                 const user = this.users.find(u => u.id === session.userId);
                 
                 if (user && user.isActive) {
                     this.currentUser = user;
-                    console.log('✅ AuthManager: User restored from session:', user.getFullName());
+                    console.log('✅ AuthManager: Usuario restaurado desde la sesión:', user.getFullName());
                     
                     this.syncUserRegistrations();
                     
                     return true;
                 } else {
-                    console.error('❌ AuthManager: User not found or inactive');
+                    console.error('❌ AuthManager: Usuario no encontrado o inactivo');
                 }
             } else {
-                console.log('ℹ️ AuthManager: No valid session found');
+                console.log('ℹ️ AuthManager: No se encontró una sesión válida');
             }
             
-            // Session expired or invalid
+            // Sesión expirada o inválida
             this.clearSession();
             return false;
         } catch (error) {
-            console.error('❌ AuthManager: Error checking session:', error);
+            console.error('❌ AuthManager: Error al verificar la sesión:', error);
             this.clearSession();
             return false;
         }
@@ -91,16 +91,16 @@ export class AuthManager {
     syncUserRegistrations() {
         if (!this.currentUser) return;
         
-        console.log('🔄 AuthManager: Syncing user registrations...');
+        console.log('🔄 AuthManager: Sincronizando registros de usuario...');
         
-        // Get registrations from RegistrationManager
+        // Obtener registros desde RegistrationManager
         const registrations = this.registrationManager.getUserRegistrations(this.currentUser.id);
-        console.log('📊 AuthManager: Found registrations in RegistrationManager:', registrations.length);
+        console.log('📊 AuthManager: Registros encontrados en RegistrationManager:', registrations.length);
         
-        // Store in user object for compatibility
+        // Guardar en el objeto usuario para compatibilidad
         this.currentUser.eventsRegistered = registrations;
         
-        console.log('✅ AuthManager: User registrations synced');
+        console.log('✅ AuthManager: Registros de usuario sincronizados');
     }
 
     clearSession() {
@@ -109,14 +109,14 @@ export class AuthManager {
     }
 
     setupSessionTimeout() {
-        // Extend session on user activity
+        // Extender sesión en actividad del usuario
         const extendSession = () => {
             if (this.currentUser) {
                 SessionStorage.extendSession();
             }
         };
 
-        // Listen for user activity
+        // Escuchar actividad del usuario
         ['click', 'keypress', 'scroll', 'mousemove'].forEach(event => {
             document.addEventListener(event, extendSession, { passive: true });
         });
@@ -124,15 +124,15 @@ export class AuthManager {
 
     async register(userData) {
         try {
-            console.log('🔄 AuthManager: Registering user:', userData.email);
+            console.log('🔄 AuthManager: Registrando usuario:', userData.email);
             
-            // Validate user data
+            // Validar datos del usuario
             const validation = User.validateUserData(userData);
             if (!validation.isValid) {
                 throw new Error(validation.errors[0]);
             }
 
-            // Check if email already exists
+            // Verificar si el correo ya existe
             const existingUser = this.users.find(user => 
                 user.email.toLowerCase() === userData.email.toLowerCase()
             );
@@ -141,9 +141,9 @@ export class AuthManager {
                 throw new Error('Ya existe una cuenta con este correo electrónico');
             }
 
-            // Create new user
+            // Crear nuevo usuario
             const newUser = new User(userData);
-            console.log('✅ AuthManager: User created:', newUser.getFullName());
+            console.log('✅ AuthManager: Usuario creado:', newUser.getFullName());
             
             this.users.push(newUser);
             const saved = this.saveUsers();
@@ -152,23 +152,23 @@ export class AuthManager {
                 throw new Error('Error al guardar el usuario');
             }
 
-            console.log('✅ AuthManager: User registered successfully');
+            console.log('✅ AuthManager: Usuario registrado exitosamente');
             return { success: true, user: newUser.toJSON() };
         } catch (error) {
-            console.error('❌ AuthManager: Registration error:', error);
+            console.error('❌ AuthManager: Error en el registro:', error);
             return { success: false, error: error.message };
         }
     }
 
     async login(email, password, rememberMe = false) {
         try {
-            console.log('🔄 AuthManager: Login attempt for:', email);
+            console.log('🔄 AuthManager: Intento de inicio de sesión para:', email);
             
-            // ✅ CRITICAL: Always reload users from storage before login
+            // ✅ CRÍTICO: Siempre recargar usuarios desde almacenamiento antes de iniciar sesión
             this.users = this.loadUsers();
-            console.log('✅ AuthManager: Reloaded users from storage:', this.users.length);
+            console.log('✅ AuthManager: Usuarios recargados desde almacenamiento:', this.users.length);
             
-            // Find user by email
+            // Buscar usuario por correo
             const user = this.users.find(u => 
                 u.email.toLowerCase() === email.toLowerCase() && u.isActive
             );
@@ -177,12 +177,12 @@ export class AuthManager {
                 throw new Error('Correo electrónico o contraseña incorrectos');
             }
 
-            // Verify password (in production, this would use proper hashing)
+            // Verificar contraseña (en producción, esto usaría hash adecuado)
             if (user.password !== password) {
                 throw new Error('Correo electrónico o contraseña incorrectos');
             }
 
-            // Update last login
+            // Actualizar último acceso
             user.updateLastLogin();
             this.currentUser = user;
             
@@ -191,13 +191,13 @@ export class AuthManager {
             const saved = this.saveUsers();
             if (saved) {
                 this.saveSession(user);
-                console.log('✅ AuthManager: Login successful for:', user.getFullName());
+                console.log('✅ AuthManager: Inicio de sesión exitoso para:', user.getFullName());
                 return { success: true, user: user.toJSON() };
             } else {
                 throw new Error('Error al guardar los datos de sesión');
             }
         } catch (error) {
-            console.error('❌ AuthManager: Login error:', error);
+            console.error('❌ AuthManager: Error en inicio de sesión:', error);
             return { success: false, error: error.message };
         }
     }
@@ -206,7 +206,7 @@ export class AuthManager {
         this.clearSession();
         this.currentUser = null;
         
-        // Redirect to login page if not already there
+        // Redirigir a la página de login si no está ya ahí
         if (!window.location.pathname.includes('login.html')) {
             window.location.href = 'login.html';
         }
@@ -214,14 +214,14 @@ export class AuthManager {
 
     updateUser(userId, updates) {
         try {
-            console.log('🔄 AuthManager: Updating user:', userId);
+            console.log('🔄 AuthManager: Actualizando usuario:', userId);
             
             const userIndex = this.users.findIndex(u => u.id === userId);
             if (userIndex === -1) {
                 throw new Error('Usuario no encontrado');
             }
 
-            // Validate email if being updated
+            // Validar correo si se está actualizando
             if (updates.email && updates.email !== this.users[userIndex].email) {
                 if (!validateEmail(updates.email)) {
                     throw new Error('El formato del correo electrónico no es válido');
@@ -232,24 +232,24 @@ export class AuthManager {
                 }
             }
 
-            // Update user data
+            // Actualizar datos del usuario
             Object.assign(this.users[userIndex], updates);
             
-            // Update current user if it's the same user
+            // Actualizar usuario actual si es el mismo
             if (this.currentUser && this.currentUser.id === userId) {
                 Object.assign(this.currentUser, updates);
-                console.log('✅ AuthManager: Current user object updated');
+                console.log('✅ AuthManager: Objeto usuario actual actualizado');
             }
 
             const saved = this.saveUsers();
             if (saved) {
-                console.log('✅ AuthManager: User update saved successfully');
+                console.log('✅ AuthManager: Cambios de usuario guardados exitosamente');
                 return { success: true, user: this.users[userIndex].toJSON() };
             } else {
                 throw new Error('Error al guardar los cambios');
             }
         } catch (error) {
-            console.error('❌ AuthManager: Update user error:', error);
+            console.error('❌ AuthManager: Error al actualizar usuario:', error);
             return { success: false, error: error.message };
         }
     }
@@ -261,17 +261,17 @@ export class AuthManager {
                 throw new Error('Usuario no encontrado');
             }
 
-            // Verify current password
+            // Verificar contraseña actual
             if (user.password !== currentPassword) {
                 throw new Error('La contraseña actual es incorrecta');
             }
 
-            // Validate new password
+            // Validar nueva contraseña
             if (!validatePassword(newPassword)) {
                 throw new Error('La nueva contraseña debe tener al menos 8 caracteres');
             }
 
-            // Update password
+            // Actualizar contraseña
             user.password = newPassword;
             this.saveUsers();
 
@@ -288,11 +288,11 @@ export class AuthManager {
                 throw new Error('Usuario no encontrado');
             }
 
-            // Remove user
+            // Eliminar usuario
             this.users.splice(userIndex, 1);
             this.saveUsers();
 
-            // If deleting current user, logout
+            // Si se elimina el usuario actual, cerrar sesión
             if (this.currentUser && this.currentUser.id === userId) {
                 this.logout();
             }
@@ -323,14 +323,14 @@ export class AuthManager {
     }
 
     getUserById(userId) {
-        console.log('🔄 AuthManager: Getting user by ID from storage:', userId);
+        console.log('🔄 AuthManager: Obteniendo usuario por ID desde almacenamiento:', userId);
         
         const userData = UserStorage.getUserById(userId);
         if (userData) {
-            console.log(`✅ AuthManager: User found: ${userData.firstName} ${userData.lastName}`);
+            console.log(`✅ AuthManager: Usuario encontrado: ${userData.firstName} ${userData.lastName}`);
             return new User(userData);
         } else {
-            console.error('❌ AuthManager: User not found in storage:', userId);
+            console.error('❌ AuthManager: Usuario no encontrado en almacenamiento:', userId);
             return null;
         }
     }
@@ -356,12 +356,12 @@ export class AuthManager {
         };
     }
 
-    // Password utilities
+    // Utilidades de contraseña
     getPasswordStrength(password) {
         return getPasswordStrength(password);
     }
 
-    // Session utilities
+    // Utilidades de sesión
     extendSession() {
         if (this.currentUser) {
             SessionStorage.extendSession();
@@ -377,53 +377,53 @@ export class AuthManager {
         return Math.max(0, remaining);
     }
 
-    isSessionExpiringSoon(threshold = 5 * 60 * 1000) { // 5 minutes
+    isSessionExpiringSoon(threshold = 5 * 60 * 1000) { // 5 minutos
         const remaining = this.getSessionTimeRemaining();
         return remaining > 0 && remaining <= threshold;
     }
 
     registerUserForEvent(eventId) {
         if (!this.currentUser) {
-            console.error('❌ AuthManager: No current user for registration');
+            console.error('❌ AuthManager: No hay usuario actual para el registro');
             return false;
         }
 
-        console.log('🔄 AuthManager: Registering user for event:', eventId);
-        console.log('📊 AuthManager: User:', this.currentUser.getFullName(), 'ID:', this.currentUser.id);
+        console.log('🔄 AuthManager: Registrando usuario para evento:', eventId);
+        console.log('📊 AuthManager: Usuario:', this.currentUser.getFullName(), 'ID:', this.currentUser.id);
         
         const success = this.registrationManager.addRegistration(this.currentUser.id, eventId);
         
         if (success) {
-            console.log('✅ AuthManager: Registration successful');
+            console.log('✅ AuthManager: Registro exitoso');
             
             this.syncUserRegistrations();
             
             return true;
         } else {
-            console.error('❌ AuthManager: Registration failed');
+            console.error('❌ AuthManager: Falló el registro');
             return false;
         }
     }
 
     unregisterUserFromEvent(eventId) {
         if (!this.currentUser) {
-            console.error('❌ AuthManager: No current user for unregistration');
+            console.error('❌ AuthManager: No hay usuario actual para cancelar registro');
             return false;
         }
 
-        console.log('🔄 AuthManager: Unregistering user from event:', eventId);
-        console.log('📊 AuthManager: User:', this.currentUser.getFullName(), 'ID:', this.currentUser.id);
+        console.log('🔄 AuthManager: Cancelando registro de usuario para evento:', eventId);
+        console.log('📊 AuthManager: Usuario:', this.currentUser.getFullName(), 'ID:', this.currentUser.id);
         
         const success = this.registrationManager.removeRegistration(this.currentUser.id, eventId);
         
         if (success) {
-            console.log('✅ AuthManager: Unregistration successful');
+            console.log('✅ AuthManager: Cancelación de registro exitosa');
             
             this.syncUserRegistrations();
             
             return true;
         } else {
-            console.error('❌ AuthManager: Unregistration failed');
+            console.error('❌ AuthManager: Falló la cancelación de registro');
             return false;
         }
     }
@@ -436,46 +436,46 @@ export class AuthManager {
 
     getUserRegistrations() {
         if (!this.currentUser) {
-            console.log('ℹ️ AuthManager: No current user, returning empty registrations');
+            console.log('ℹ️ AuthManager: No hay usuario actual, devolviendo registros vacíos');
             return [];
         }
         
-        console.log('🔄 AuthManager: Getting registrations for user:', this.currentUser.id);
+        console.log('🔄 AuthManager: Obteniendo registros para usuario:', this.currentUser.id);
         
         const registrations = this.registrationManager.getUserRegistrations(this.currentUser.id);
-        console.log('📊 AuthManager: Found registrations:', registrations.length);
+        console.log('📊 AuthManager: Registros encontrados:', registrations.length);
         
         this.currentUser.eventsRegistered = registrations;
         
         return registrations;
     }
 
-    // Legacy methods for compatibility
+    // Métodos heredados para compatibilidad
     markEventAttended(eventId) {
-        // This would be implemented in a separate attendance system
-        console.log('ℹ️ AuthManager: markEventAttended called for:', eventId);
+        // Esto se implementaría en un sistema de asistencia separado
+        console.log('ℹ️ AuthManager: markEventAttended llamado para:', eventId);
         return true;
     }
 
     hasUserAttendedEvent(eventId) {
-        // This would be implemented in a separate attendance system
+        // Esto se implementaría en un sistema de asistencia separado
         return false;
     }
 
     debugCurrentUser() {
-        console.log('🔍 AuthManager: DEBUG - Current user state');
+        console.log('🔍 AuthManager: DEPURAR - Estado actual del usuario');
         if (this.currentUser) {
-            console.log('📊 AuthManager: User:', this.currentUser.getFullName());
-            console.log('📊 AuthManager: User ID:', this.currentUser.id);
+            console.log('📊 AuthManager: Usuario:', this.currentUser.getFullName());
+            console.log('📊 AuthManager: ID de usuario:', this.currentUser.id);
             
             const registrations = this.getUserRegistrations();
-            console.log('📊 AuthManager: Registrations:', registrations.length);
-            console.log('📊 AuthManager: Registration IDs:', registrations);
+            console.log('📊 AuthManager: Registros:', registrations.length);
+            console.log('📊 AuthManager: IDs de registro:', registrations);
         } else {
-            console.log('📊 AuthManager: No current user');
+            console.log('📊 AuthManager: No hay usuario actual');
         }
         
-        // Debug registration manager
+        // Depurar gestor de registros
         this.registrationManager.debugRegistrations();
     }
 }

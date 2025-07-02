@@ -1,4 +1,4 @@
-// Authentication Pages JavaScript - Redesigned
+// JavaScript para páginas de autenticación 
 import { AuthManager } from '../components/AuthManager.js';
 import { NotificationManager } from '../components/NotificationManager.js';
 import { getPasswordStrength } from '../utils/helpers.js';
@@ -16,35 +16,37 @@ class AuthPageManager {
         this.setupPasswordStrength();
     }
 
+    // Redirige si el usuario ya está autenticado
     checkRedirection() {
         const currentPage = window.location.pathname;
         const isAuthPage = currentPage.includes('login.html') || currentPage.includes('register.html');
         
         if (this.authManager.currentUser && isAuthPage) {
-            // User is logged in, redirect to main app
+            // Usuario autenticado, redirigir a la app principal
             window.location.href = 'index.html';
         }
     }
 
+    // Configura los listeners de los formularios
     setupEventListeners() {
-        // Login form
+        // Formulario de login
         const loginForm = document.getElementById('login-form');
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => this.handleLogin(e));
             
-            // Password toggle
+            // Mostrar/ocultar contraseña
             const togglePassword = document.getElementById('toggle-password');
             if (togglePassword) {
                 togglePassword.addEventListener('click', () => this.togglePasswordVisibility('password'));
             }
         }
         
-        // Register form
+        // Formulario de registro
         const registerForm = document.getElementById('register-form');
         if (registerForm) {
             registerForm.addEventListener('submit', (e) => this.handleRegister(e));
             
-            // Password toggles
+            // Mostrar/ocultar contraseñas
             const togglePassword = document.getElementById('toggle-password');
             const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
             
@@ -57,6 +59,7 @@ class AuthPageManager {
         }
     }
 
+    // Configura la barra de fuerza de contraseña
     setupPasswordStrength() {
         const passwordInput = document.getElementById('password');
         if (passwordInput) {
@@ -64,6 +67,7 @@ class AuthPageManager {
         }
     }
 
+    // Maneja el login
     async handleLogin(e) {
         e.preventDefault();
         
@@ -73,23 +77,23 @@ class AuthPageManager {
         const password = formData.get('password');
         const rememberMe = formData.get('remember-me') === 'on';
         
-        console.log('🔄 AuthPageManager: Login attempt for:', email);
+        console.log('🔄 AuthPageManager: Intento de login para:', email);
         
-        // Show loading state
+        // Estado de carga en el botón
         const submitBtn = form.querySelector('button[type="submit"]');
         this.setButtonLoading(submitBtn, true);
         
         try {
             const result = await this.authManager.login(email, password, rememberMe);
             
-            console.log('📊 AuthPageManager: Login result:', result.success);
+            console.log('📊 AuthPageManager: Resultado login:', result.success);
             
             if (result.success) {
                 this.notificationManager.success(
                     `¡Bienvenido de vuelta, ${result.user.firstName}!`
                 );
                 
-                // Redirect to main app
+                // Redirigir a la app principal
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 1000);
@@ -97,13 +101,14 @@ class AuthPageManager {
                 this.notificationManager.error(result.error);
             }
         } catch (error) {
-            console.error('❌ AuthPageManager: Login error:', error);
+            console.error('❌ AuthPageManager: Error en login:', error);
             this.notificationManager.error('Error al iniciar sesión');
         } finally {
             this.setButtonLoading(submitBtn, false);
         }
     }
 
+    // Maneja el registro
     async handleRegister(e) {
         e.preventDefault();
         
@@ -120,36 +125,36 @@ class AuthPageManager {
         
         const confirmPassword = formData.get('confirmPassword');
         
-        console.log('🔄 AuthPageManager: Registration attempt for:', userData.email);
+        console.log('🔄 AuthPageManager: Intento de registro para:', userData.email);
         
-        // Validate passwords match
+        // Validar que las contraseñas coincidan
         if (userData.password !== confirmPassword) {
             this.notificationManager.error('Las contraseñas no coinciden');
             return;
         }
         
-        // Validate terms acceptance
+        // Validar aceptación de términos
         const termsCheckbox = document.getElementById('terms');
         if (!termsCheckbox || !termsCheckbox.checked) {
             this.notificationManager.error('Debes aceptar los términos y condiciones');
             return;
         }
         
-        // Show loading state
+        // Estado de carga en el botón
         const submitBtn = form.querySelector('button[type="submit"]');
         this.setButtonLoading(submitBtn, true);
         
         try {
             const result = await this.authManager.register(userData);
             
-            console.log('📊 AuthPageManager: Registration result:', result.success);
+            console.log('📊 AuthPageManager: Resultado registro:', result.success);
             
             if (result.success) {
                 this.notificationManager.success(
                     '¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.'
                 );
                 
-                // Redirect to login
+                // Redirigir a login
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 2000);
@@ -157,18 +162,19 @@ class AuthPageManager {
                 this.notificationManager.error(result.error);
             }
         } catch (error) {
-            console.error('❌ AuthPageManager: Registration error:', error);
+            console.error('❌ AuthPageManager: Error en registro:', error);
             this.notificationManager.error('Error al crear la cuenta');
         } finally {
             this.setButtonLoading(submitBtn, false);
         }
     }
 
+    // Alterna la visibilidad de la contraseña
     togglePasswordVisibility(inputId) {
         const input = document.getElementById(inputId);
         let button;
         
-        // Corregir la selección del botón
+        // Selección del botón correspondiente
         if (inputId === 'password') {
             button = document.getElementById('toggle-password');
         } else if (inputId === 'confirmPassword') {
@@ -196,6 +202,7 @@ class AuthPageManager {
         }
     }
 
+    // Actualiza la barra de fuerza de contraseña
     updatePasswordStrength() {
         const passwordInput = document.getElementById('password');
         const strengthFill = document.getElementById('strength-fill');
@@ -209,6 +216,7 @@ class AuthPageManager {
         strengthText.textContent = strength.text;
     }
 
+    // Cambia el estado de carga de un botón
     setButtonLoading(button, loading) {
         if (!button) return;
         
@@ -229,7 +237,7 @@ class AuthPageManager {
     }
 }
 
-// Initialize when DOM is loaded
+// Inicializa cuando el DOM está listo
 document.addEventListener('DOMContentLoaded', () => {
     window.authPageManager = new AuthPageManager();
 });

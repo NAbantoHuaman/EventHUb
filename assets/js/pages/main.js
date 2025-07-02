@@ -1,4 +1,4 @@
-// Centro principal
+// Centro principal de la aplicación
 import { AuthManager } from '../components/AuthManager.js';
 import { EventManager } from '../components/EventManager.js';
 import { UIManager } from '../components/UIManager.js';
@@ -26,7 +26,7 @@ class MainApp {
     }
 
     async init() {
-        console.log('🚀 MainApp: Initializing...');
+        console.log('🚀 MainApp: Inicializando...');
         
         await this.waitForAuthManager();
         this.setupEventListeners();
@@ -35,22 +35,23 @@ class MainApp {
         this.renderEvents();
         
         this.isDataLoaded = true;
-        console.log('✅ MainApp: Initialized successfully');
-        console.log('📊 MainApp: Final user registrations:', this.userRegistrations);
+        console.log('✅ MainApp: Inicialización exitosa');
+        console.log('📊 MainApp: Inscripciones finales del usuario:', this.userRegistrations);
     }
 
     async waitForAuthManager() {
         return new Promise((resolve) => {
             // Dar tiempo al AuthManager para procesar la sesión completamente
             setTimeout(() => {
-                console.log('✅ MainApp: AuthManager ready');
+                console.log('✅ MainApp: AuthManager listo');
                 resolve();
             }, 100);
         });
     }
 
+    // Configura los listeners de la interfaz
     setupEventListeners() {
-        // Tab switching
+        // Cambio de pestañas
         const tabButtons = document.querySelectorAll('.tab-button');
         tabButtons.forEach(button => {
             button.addEventListener('click', (e) => {
@@ -59,7 +60,7 @@ class MainApp {
             });
         });
 
-        // Search and filters with debounce
+        // Búsqueda y filtros con debounce
         const searchInput = document.getElementById('search-input');
         const categoryFilter = document.getElementById('category-filter');
         const locationFilter = document.getElementById('location-filter');
@@ -86,16 +87,16 @@ class MainApp {
             clearFiltersBtn.addEventListener('click', () => this.clearFilters());
         }
 
-        // User menu
+        // Menú de usuario
         this.setupUserMenu();
 
-        // Modal events
+        // Eventos de modales
         this.setupModalEvents();
 
-        // Custom events
+        // Eventos personalizados
         this.setupCustomEvents();
 
-        // Show all events button
+        // Botón para mostrar todos los eventos
         const showAllEventsBtn = document.getElementById('show-all-events');
         if (showAllEventsBtn) {
             showAllEventsBtn.addEventListener('click', () => {
@@ -105,6 +106,7 @@ class MainApp {
         }
     }
 
+    // Configura el menú de usuario
     setupUserMenu() {
         const userMenuTrigger = document.getElementById('user-menu-trigger');
         const userMenuDropdown = document.getElementById('user-menu-dropdown');
@@ -126,14 +128,15 @@ class MainApp {
         }
     }
 
+    // Configura los eventos de los modales
     setupModalEvents() {
-        // Close modal buttons
+        // Botones para cerrar el modal
         const closeButtons = document.querySelectorAll('#close-modal, #modal-close-btn');
         closeButtons.forEach(button => {
             button.addEventListener('click', () => this.modalManager.closeActiveModal());
         });
 
-        // Modal overlay click
+        // Clic en el overlay del modal
         const modal = document.getElementById('event-modal');
         if (modal) {
             modal.addEventListener('click', (e) => {
@@ -143,7 +146,7 @@ class MainApp {
             });
         }
 
-        // Escape key
+        // Tecla Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.modalManager.closeActiveModal();
@@ -151,18 +154,19 @@ class MainApp {
         });
     }
 
+    // Configura eventos personalizados de la app
     setupCustomEvents() {
-        // Quick filter events
+        // Filtros rápidos
         document.addEventListener('quickFilter', (e) => {
             this.handleQuickFilter(e.detail.filterType);
         });
 
-        // Switch tab events
+        // Cambio de pestaña
         document.addEventListener('switchTab', (e) => {
             this.switchTab(e.detail.tab);
         });
 
-        // Registration events
+        // Inscripción a eventos
         document.addEventListener('registerForEvent', (e) => {
             this.registerForEvent(e.detail.eventId);
         });
@@ -172,34 +176,36 @@ class MainApp {
         });
     }
 
+    // Carga los datos iniciales de la app
     async loadInitialData() {
-        console.log('🔄 MainApp: Loading initial data...');
+        console.log('🔄 MainApp: Cargando datos iniciales...');
         
         await this.loadUserRegistrations();
         
-        // Luego cargar opciones de filtros
+        // Cargar opciones de filtros
         const categories = this.eventManager.getCategories();
         const locations = this.eventManager.getLocations();
         this.uiManager.updateFilterOptions(categories, locations);
 
-        // Finalmente actualizar estadísticas
+        // Actualizar estadísticas
         this.updateStats();
         
-        console.log('✅ MainApp: Initial data loaded successfully');
-        console.log('📊 MainApp: Total events available:', this.eventManager.getAllEvents().length);
-        console.log('📊 MainApp: User registrations loaded:', this.userRegistrations.length);
-        console.log('📊 MainApp: Registration IDs:', this.userRegistrations);
+        console.log('✅ MainApp: Datos iniciales cargados');
+        console.log('📊 MainApp: Total de eventos disponibles:', this.eventManager.getAllEvents().length);
+        console.log('📊 MainApp: Inscripciones del usuario:', this.userRegistrations.length);
+        console.log('📊 MainApp: IDs de inscripciones:', this.userRegistrations);
     }
 
+    // Carga las inscripciones del usuario autenticado
     async loadUserRegistrations() {
-        console.log('🔄 MainApp: Loading user registrations...');
+        console.log('🔄 MainApp: Cargando inscripciones del usuario...');
         
         const user = this.authManager.getCurrentUser();
         if (user) {
-            console.log('✅ MainApp: User found:', user.getFullName());
+            console.log('✅ MainApp: Usuario encontrado:', user.getFullName());
             
             this.userRegistrations = this.registrationManager.getUserRegistrations(user.id);
-            console.log('📊 MainApp: Direct registrations from RegistrationManager:', this.userRegistrations.length);
+            console.log('📊 MainApp: Inscripciones directas desde RegistrationManager:', this.userRegistrations.length);
             
             const allEvents = this.eventManager.getAllEvents();
             const validRegistrations = [];
@@ -208,42 +214,43 @@ class MainApp {
                 const eventExists = allEvents.some(event => event.id === regId);
                 if (eventExists) {
                     validRegistrations.push(regId);
-                    console.log(`✅ MainApp: Valid registration for event: ${regId}`);
+                    console.log(`✅ MainApp: Inscripción válida para el evento: ${regId}`);
                 } else {
-                    console.warn(`⚠️ MainApp: Invalid registration for non-existent event: ${regId}`);
+                    console.warn(`⚠️ MainApp: Inscripción inválida para evento inexistente: ${regId}`);
                 }
             });
             
             this.userRegistrations = validRegistrations;
-            console.log('✅ MainApp: Final valid registrations:', this.userRegistrations.length);
+            console.log('✅ MainApp: Inscripciones válidas finales:', this.userRegistrations.length);
             
         } else {
-            console.log('ℹ️ MainApp: No authenticated user');
+            console.log('ℹ️ MainApp: No hay usuario autenticado');
             this.userRegistrations = [];
         }
         
-        console.log('🔍 MainApp: Final user registrations verification:');
+        console.log('🔍 MainApp: Verificación final de inscripciones:');
         this.userRegistrations.forEach((regId, index) => {
-            console.log(`📊 Registration ${index + 1}: ${regId}`);
+            console.log(`📊 Inscripción ${index + 1}: ${regId}`);
         });
     }
 
+    // Actualiza la interfaz según el estado de autenticación
     updateAuthUI() {
         const user = this.authManager.getCurrentUser();
         const isAuthenticated = this.authManager.isAuthenticated();
         
-        console.log('🔄 MainApp: Updating auth UI, authenticated:', isAuthenticated);
-        console.log('📊 MainApp: User registrations for UI:', this.userRegistrations.length);
+        console.log('🔄 MainApp: Actualizando UI de autenticación, autenticado:', isAuthenticated);
+        console.log('📊 MainApp: Inscripciones del usuario para UI:', this.userRegistrations.length);
 
-        // Toggle auth elements
+        // Alterna elementos según autenticación
         document.body.classList.toggle('authenticated', isAuthenticated);
 
         if (isAuthenticated && user) {
-            // Update user info
+            // Actualiza info de usuario
             this.updateElement('user-name-header', user.getFullName());
             this.updateElement('user-initials', user.getInitials());
             
-            // Update sidebar
+            // Actualiza barra lateral
             this.sidebarManager.showAuthenticatedElements(true);
             this.sidebarManager.updateUpcomingEvents(
                 this.eventManager.getUpcomingEvents(),
@@ -254,15 +261,16 @@ class MainApp {
         }
     }
 
+    // Actualiza las estadísticas de eventos
     updateStats() {
         const eventStats = this.eventManager.getEventStats();
         
-        console.log('📊 MainApp: Updating stats:', eventStats);
-        console.log('📊 MainApp: User registrations for stats:', this.userRegistrations.length);
+        console.log('📊 MainApp: Actualizando estadísticas:', eventStats);
+        console.log('📊 MainApp: Inscripciones del usuario para estadísticas:', this.userRegistrations.length);
         
         this.uiManager.updateStats(eventStats);
         
-        // Update sidebar stats
+        // Actualiza estadísticas en la barra lateral
         const sidebarStats = {
             available: eventStats.available,
             registered: this.userRegistrations.length,
@@ -273,17 +281,18 @@ class MainApp {
         this.sidebarManager.updateStats(sidebarStats);
     }
 
+    // Actualiza los contadores de las pestañas
     updateTabCounts() {
         const allCount = this.eventManager.getAllEvents().length;
         const registeredCount = this.userRegistrations.length;
         
-        console.log('📊 MainApp: Updating tab counts - All:', allCount, 'Registered:', registeredCount);
+        console.log('📊 MainApp: Actualizando contadores de pestañas - Todos:', allCount, 'Inscritos:', registeredCount);
         
-        // Update tab button counts with animation
+        // Actualiza los contadores de los botones de pestañas con animación
         this.uiManager.animateCountUpdate('all-count', allCount);
         this.uiManager.animateCountUpdate('registered-count', registeredCount);
         
-        // Update events found count based on current tab
+        // Actualiza el contador de eventos encontrados según la pestaña actual
         let currentEvents;
         if (this.currentTab === 'all') {
             currentEvents = this.eventManager.getFilteredEvents().length;
@@ -298,13 +307,14 @@ class MainApp {
         this.updateElement('events-found', `${currentEvents} eventos encontrados`);
     }
 
+    // Cambia de pestaña
     switchTab(tab) {
-        console.log('🔄 MainApp: Switching to tab:', tab);
+        console.log('🔄 MainApp: Cambiando a la pestaña:', tab);
         
         this.currentTab = tab;
         this.uiManager.switchTab(tab);
         
-        // Update tab title
+        // Actualiza el título de la pestaña
         const title = document.getElementById('events-title');
         if (title) {
             title.textContent = tab === 'all' ? 'Eventos disponibles' : 'Mis inscripciones';
@@ -314,9 +324,10 @@ class MainApp {
         this.updateTabCounts();
     }
 
+    // Renderiza los eventos en la interfaz
     renderEvents() {
-        console.log('🔄 MainApp: Rendering events for tab:', this.currentTab);
-        console.log('📊 MainApp: Current user registrations:', this.userRegistrations);
+        console.log('🔄 MainApp: Renderizando eventos para la pestaña:', this.currentTab);
+        console.log('📊 MainApp: Inscripciones actuales del usuario:', this.userRegistrations);
         
         let events;
         let registeredCount = this.userRegistrations.length;
@@ -327,19 +338,19 @@ class MainApp {
             const allEvents = this.eventManager.getAllEvents();
             events = allEvents.filter(event => {
                 const isRegistered = this.userRegistrations.includes(event.id);
-                console.log(`🔍 MainApp: Event "${event.name}" (${event.id}): registered = ${isRegistered}`);
+                console.log(`🔍 MainApp: Evento "${event.name}" (${event.id}): inscrito = ${isRegistered}`);
                 return isRegistered;
             });
-            console.log('✅ MainApp: Filtered registered events:', events.length);
+            console.log('✅ MainApp: Eventos filtrados inscritos:', events.length);
         }
         
-        console.log('📊 MainApp: Events to render:', events.length);
+        console.log('📊 MainApp: Eventos a renderizar:', events.length);
         
         const eventsGrid = document.getElementById('events-grid');
         const noEventsDiv = document.getElementById('no-events');
         
         if (!eventsGrid || !noEventsDiv) {
-            console.error('❌ MainApp: Events grid or no-events div not found');
+            console.error('❌ MainApp: No se encontró el grid de eventos o el div de no-eventos');
             return;
         }
         
@@ -366,31 +377,32 @@ class MainApp {
             
             eventsGrid.innerHTML = events.map(event => {
                 const isRegistered = this.userRegistrations.includes(event.id);
-                console.log(`📊 MainApp: Rendering event "${event.name}" (${event.id}): registered = ${isRegistered}`);
+                console.log(`📊 MainApp: Renderizando evento "${event.name}" (${event.id}): inscrito = ${isRegistered}`);
                 
                 if (isRegistered) {
-                    console.log(`✅ MainApp: Event ${event.id} IS REGISTERED - should show registered state`);
+                    console.log(`✅ MainApp: Evento ${event.id} INSCRITO - debe mostrar estado inscrito`);
                 } else {
-                    console.log(`❌ MainApp: Event ${event.id} NOT REGISTERED - should show register button`);
+                    console.log(`❌ MainApp: Evento ${event.id} NO INSCRITO - debe mostrar botón de inscripción`);
                 }
                 
                 return this.uiManager.createEventCard(event, isRegistered);
             }).join('');
         }
         
-        // Update counts
+        // Actualiza los contadores
         const allCount = this.eventManager.getAllEvents().length;
         this.uiManager.updateCounts(allCount, registeredCount, events.length);
         this.updateTabCounts();
     }
 
+    // Aplica los filtros de búsqueda y selección
     applyFilters() {
         const searchValue = document.getElementById('search-input')?.value || '';
         const categoryValue = document.getElementById('category-filter')?.value || 'all';
         const locationValue = document.getElementById('location-filter')?.value || 'all';
         const dateValue = document.getElementById('date-filter')?.value || '';
         
-        console.log('🔄 MainApp: Applying filters:', { searchValue, categoryValue, locationValue, dateValue });
+        console.log('🔄 MainApp: Aplicando filtros:', { searchValue, categoryValue, locationValue, dateValue });
         
         const filters = {
             search: searchValue,
@@ -401,7 +413,7 @@ class MainApp {
         
         this.eventManager.applyFilters(filters);
         
-        // Show/hide clear filters button
+        // Mostrar/ocultar botón de limpiar filtros
         const hasFilters = searchValue || categoryValue !== 'all' || locationValue !== 'all' || dateValue;
         const clearBtn = document.getElementById('clear-filters');
         if (clearBtn) {
@@ -411,10 +423,11 @@ class MainApp {
         this.renderEvents();
     }
 
+    // Limpia todos los filtros
     clearFilters() {
-        console.log('🔄 MainApp: Clearing filters');
+        console.log('🔄 MainApp: Limpiando filtros');
         
-        // Clear form inputs
+        // Limpiar inputs del formulario
         const searchInput = document.getElementById('search-input');
         const categoryFilter = document.getElementById('category-filter');
         const locationFilter = document.getElementById('location-filter');
@@ -425,10 +438,10 @@ class MainApp {
         if (locationFilter) locationFilter.value = 'all';
         if (dateFilter) dateFilter.value = '';
         
-        // Clear filters in event manager
+        // Limpiar filtros en el event manager
         this.eventManager.clearFilters();
         
-        // Hide clear button
+        // Ocultar botón de limpiar
         const clearBtn = document.getElementById('clear-filters');
         if (clearBtn) {
             clearBtn.style.display = 'none';
@@ -437,8 +450,9 @@ class MainApp {
         this.renderEvents();
     }
 
+    // Maneja los filtros rápidos (hoy, semana, gratis)
     handleQuickFilter(filterType) {
-        console.log('🔄 MainApp: Handling quick filter:', filterType);
+        console.log('🔄 MainApp: Aplicando filtro rápido:', filterType);
         
         this.clearFilters();
         
@@ -454,7 +468,7 @@ class MainApp {
                 this.applyFilters();
                 break;
             case 'free':
-                // Filter for free events (price = 0)
+                // Filtrar solo eventos gratuitos (precio = 0)
                 const freeEvents = this.eventManager.getAllEvents().filter(event => event.price === 0);
                 this.eventManager.filteredEvents = freeEvents;
                 this.renderEvents();
@@ -462,26 +476,27 @@ class MainApp {
         }
     }
 
-    // Global methods for onclick handlers
+    // Métodos globales para handlers onclick
     openEventModal(eventId) {
-        console.log('🔄 MainApp: Opening modal for event:', eventId);
+        console.log('🔄 MainApp: Abriendo modal para evento:', eventId);
         
         const event = this.eventManager.getEventById(eventId);
         if (!event) {
-            console.error('❌ MainApp: Event not found:', eventId);
+            console.error('❌ MainApp: Evento no encontrado:', eventId);
             this.notificationManager.error('Evento no encontrado');
             return;
         }
         
         const isRegistered = this.userRegistrations.includes(eventId);
-        console.log(`📊 MainApp: Modal for event ${eventId}: registered = ${isRegistered}`);
-        console.log(`🔍 MainApp: Current registrations:`, this.userRegistrations);
+        console.log(`📊 MainApp: Modal para evento ${eventId}: inscrito = ${isRegistered}`);
+        console.log(`🔍 MainApp: Inscripciones actuales:`, this.userRegistrations);
         
         this.modalManager.openEventModal(event, isRegistered, this.authManager);
     }
 
+    // Inscribe al usuario en un evento
     registerForEvent(eventId) {
-        console.log('🔄 MainApp: Registering for event:', eventId);
+        console.log('🔄 MainApp: Inscribiendo en evento:', eventId);
         
         if (!this.authManager.isAuthenticated()) {
             this.notificationManager.warning('Debes iniciar sesión para inscribirte en eventos');
@@ -512,18 +527,18 @@ class MainApp {
             return;
         }
         
-        console.log('🔄 MainApp: Starting registration process...');
+        console.log('🔄 MainApp: Iniciando proceso de inscripción...');
         
         const user = this.authManager.getCurrentUser();
         const success = this.registrationManager.addRegistration(user.id, eventId);
         
         if (success) {
-            console.log('✅ MainApp: Registration successful in RegistrationManager');
+            console.log('✅ MainApp: Inscripción exitosa en RegistrationManager');
             
             this.userRegistrations.push(eventId);
-            console.log('✅ MainApp: Updated local registrations:', this.userRegistrations);
+            console.log('✅ MainApp: Inscripciones locales actualizadas:', this.userRegistrations);
             
-            // Update event registration count
+            // Actualiza el conteo de inscripciones del evento
             this.eventManager.updateEventRegistration(eventId, true);
             
             this.notificationManager.success(`Te has inscrito exitosamente en "${event.name}"`);
@@ -535,13 +550,14 @@ class MainApp {
             
             this.modalManager.closeActiveModal();
         } else {
-            console.error('❌ MainApp: Registration failed');
+            console.error('❌ MainApp: Falló la inscripción');
             this.notificationManager.error('Error al inscribirse en el evento');
         }
     }
 
+    // Desinscribe al usuario de un evento
     unregisterFromEvent(eventId) {
-        console.log('🔄 MainApp: Unregistering from event:', eventId);
+        console.log('🔄 MainApp: Desinscribiendo del evento:', eventId);
         
         if (!this.authManager.isAuthenticated()) {
             return;
@@ -558,21 +574,21 @@ class MainApp {
             return;
         }
         
-        console.log('🔄 MainApp: Starting unregistration process...');
+        console.log('🔄 MainApp: Iniciando proceso de desinscripción...');
         
         const user = this.authManager.getCurrentUser();
         const success = this.registrationManager.removeRegistration(user.id, eventId);
         
         if (success) {
-            console.log('✅ MainApp: Unregistration successful in RegistrationManager');
+            console.log('✅ MainApp: Desinscripción exitosa en RegistrationManager');
             
             const index = this.userRegistrations.indexOf(eventId);
             if (index > -1) {
                 this.userRegistrations.splice(index, 1);
             }
-            console.log('✅ MainApp: Updated local registrations:', this.userRegistrations);
+            console.log('✅ MainApp: Inscripciones locales actualizadas:', this.userRegistrations);
             
-            // Update event registration count
+            // Actualiza el conteo de inscripciones del evento
             this.eventManager.updateEventRegistration(eventId, false);
             
             this.notificationManager.success(`Te has desinscrito de "${event.name}"`);
@@ -584,17 +600,18 @@ class MainApp {
             
             this.modalManager.closeActiveModal();
         } else {
-            console.error('❌ MainApp: Unregistration failed');
+            console.error('❌ MainApp: Falló la desinscripción');
             this.notificationManager.error('Error al desinscribirse del evento');
         }
     }
 
+    // Cierra la sesión del usuario
     handleLogout() {
         this.authManager.logout();
         this.notificationManager.info('Sesión cerrada exitosamente');
     }
 
-    // Utility method
+    // Método utilitario para actualizar el contenido de un elemento
     updateElement(id, content) {
         const element = document.getElementById(id);
         if (element) {
@@ -602,17 +619,18 @@ class MainApp {
         }
     }
 
+    // Modo debug: muestra el estado completo de la app en consola
     debugApp() {
-        console.log('🔍 MainApp: DEBUG - Full app state');
-        console.log('📊 Current tab:', this.currentTab);
-        console.log('📊 User registrations (local):', this.userRegistrations);
-        console.log('📊 Data loaded:', this.isDataLoaded);
+        console.log('🔍 MainApp: DEBUG - Estado completo de la app');
+        console.log('📊 Pestaña actual:', this.currentTab);
+        console.log('📊 Inscripciones del usuario (local):', this.userRegistrations);
+        console.log('📊 Datos cargados:', this.isDataLoaded);
         
         // Debug AuthManager
         const user = this.authManager.getCurrentUser();
         if (user) {
-            console.log('📊 AuthManager user:', user.getFullName());
-            console.log('📊 AuthManager registrations:', this.authManager.getUserRegistrations());
+            console.log('📊 Usuario en AuthManager:', user.getFullName());
+            console.log('📊 Inscripciones en AuthManager:', this.authManager.getUserRegistrations());
         }
         
         // Debug RegistrationManager
@@ -622,25 +640,25 @@ class MainApp {
         const eventsGrid = document.getElementById('events-grid');
         if (eventsGrid) {
             const eventCards = eventsGrid.querySelectorAll('.event-card');
-            console.log('📊 Rendered event cards:', eventCards.length);
+            console.log('📊 Tarjetas de eventos renderizadas:', eventCards.length);
             
             eventCards.forEach((card, index) => {
                 const eventId = card.dataset.eventId;
                 const isRegistered = this.userRegistrations.includes(eventId);
                 const hasRegisteredBadge = card.querySelector('.badge-registered');
-                console.log(`📊 Card ${index + 1}: Event ${eventId}, Registered: ${isRegistered}, Has badge: ${!!hasRegisteredBadge}`);
+                console.log(`📊 Tarjeta ${index + 1}: Evento ${eventId}, Inscrito: ${isRegistered}, Tiene badge: ${!!hasRegisteredBadge}`);
             });
         }
     }
 }
 
-// Initialize app when DOM is loaded
+// Inicializa la app cuando el DOM está listo
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 DOM loaded, initializing app...');
+    console.log('🚀 DOM cargado, inicializando app...');
     window.mainApp = new MainApp();
 });
 
-// Make methods globally available for onclick handlers
+// Métodos globales para handlers onclick
 window.openEventModal = (eventId) => {
     if (window.mainApp) {
         window.mainApp.openEventModal(eventId);

@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evenza - Gestión de Eventos</title>
+    <title>Eventopia - Gestión de Eventos</title>
     <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
-    <!-- Sidebar Dashboard -->
+    <!-- Barra lateral del panel de control -->
     <aside class="sidebar-dashboard" id="sidebar-dashboard">
         <div class="sidebar-toggle" id="sidebar-toggle">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -31,6 +31,7 @@
             </div>
             
             <div class="sidebar-stats">
+                <!-- Tarjetas de estadísticas -->
                 <div class="sidebar-stat-card stat-available">
                     <div class="stat-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -92,14 +93,14 @@
                 </div>
             </div>
             
-            <!-- Upcoming Events (solo para usuarios autenticados) -->
+            <!-- Próximos eventos (solo para usuarios autenticados) -->
             <div id="sidebar-upcoming-events" class="sidebar-upcoming-events auth-only" style="display: none;">
                 <h3>Próximos eventos</h3>
                 <div id="sidebar-upcoming-events-list" class="sidebar-upcoming-events-list"></div>
                 <a href="#" class="sidebar-view-all" id="sidebar-view-all-events">Ver todos mis eventos →</a>
             </div>
             
-            <!-- Quick Actions -->
+            <!-- Acciones rápidas -->
             <div class="sidebar-quick-actions">
                 <h3>Acciones rápidas</h3>
                 <div class="quick-actions-grid">
@@ -138,10 +139,10 @@
         </div>
     </aside>
 
-    <!-- Sidebar Overlay -->
+    <!-- Capa oscura del sidebar -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-    <!-- Header -->
+    <!-- Encabezado -->
     <header class="header">
         <div class="container">
             <div class="header-content">
@@ -227,7 +228,7 @@
 
     <main class="main">
         <div class="container">
-            <!-- Tabs -->
+            <!-- Pestañas -->
             <nav class="tabs">
                 <button class="tab-button active" data-tab="all" id="tab-all">
                     Todos los eventos (<span id="all-count">0</span>)
@@ -237,7 +238,7 @@
                 </button>
             </nav>
 
-            <!-- Filters -->
+            <!-- Filtros -->
             <section class="filters">
                 <div class="filters-header">
                     <div class="filters-title">
@@ -301,7 +302,7 @@
                 </div>
             </section>
 
-            <!-- Events Section -->
+            <!-- Sección de eventos -->
             <section class="events-section">
                 <div class="events-header">
                     <h2 id="events-title">Eventos disponibles</h2>
@@ -327,7 +328,7 @@
         </div>
     </main>
 
-    <!-- Event Details Modal -->
+    <!-- Modal de detalles del evento -->
     <div id="event-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-content">
             <div class="modal-header">
@@ -433,10 +434,10 @@
         </div>
     </div>
 
-    <!-- Notifications -->
+    <!-- Notificaciones -->
     <div id="notifications" class="notifications"></div>
 
-    <!-- Footer -->
+    <!-- Pie de página -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -453,7 +454,6 @@
                 </div>
                 <p>Una experiencia sencilla, eficiente y personalizable para descubrir, gestionar e inscribirse en eventos.</p>
                 <p class="footer-tech">© 2025 Eventopia. Todos los derechos reservados</p>
-
             </div>
         </div>
     </footer>

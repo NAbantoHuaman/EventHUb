@@ -1,4 +1,4 @@
-/* Header Layout */
+/* Diseño del Header */
 .header {
     background: white;
     border-bottom: 1px solid #e5e7eb;
@@ -8,6 +8,7 @@
     z-index: 40;
 }
 
+/* Contenido del Header */
 .header-content {
     display: flex;
     justify-content: space-between;
@@ -15,6 +16,7 @@
     padding: 1.5rem 0;
 }
 
+/* Sección del logo */
 .logo-section {
     display: flex;
     align-items: center;
@@ -49,13 +51,14 @@
     color: #6b7280;
 }
 
-/* Header Actions */
+/* Acciones del Header */
 .header-actions {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
+/* Botones de autenticación */
 .auth-buttons {
     display: flex;
     gap: 0.75rem;
@@ -91,7 +94,7 @@
     background: #f9fafb;
 }
 
-/* User Menu */
+/* Menú de usuario */
 .user-menu {
     position: relative;
 }
@@ -120,6 +123,7 @@
     outline-offset: 2px;
 }
 
+/* Avatar de usuario */
 .user-avatar {
     width: 2rem;
     height: 2rem;
@@ -133,6 +137,7 @@
     font-size: 0.875rem;
 }
 
+/* Dropdown del menú de usuario */
 .user-menu-dropdown {
     position: absolute;
     top: 100%;
@@ -156,6 +161,7 @@
     transform: translateY(0);
 }
 
+/* Ítems del menú */
 .menu-item {
     display: flex;
     align-items: center;
@@ -181,12 +187,14 @@
     color: #2563eb;
 }
 
+/* Separador del menú */
 .menu-divider {
     height: 1px;
     background: #e5e7eb;
     margin: 0.5rem 0;
 }
 
+/* Botón de cerrar sesión */
 .logout-btn {
     color: #dc2626;
 }
@@ -195,7 +203,7 @@
     background: #fef2f2;
 }
 
-/* Auth state visibility */
+/* Visibilidad según estado de autenticación */
 .auth-only {
     display: none;
 }
@@ -212,7 +220,7 @@
     display: none;
 }
 
-/* Responsive header */
+/* Header responsivo */
 @media (max-width: 768px) {
     .header-content {
         flex-direction: column;

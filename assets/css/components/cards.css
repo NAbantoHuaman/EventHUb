@@ -1,4 +1,4 @@
-/* Card Components */
+/* Componentes de Tarjetas */
 .card {
     background: white;
     border-radius: 0.75rem;
@@ -8,24 +8,28 @@
     transition: all 0.3s ease;
 }
 
+/* Efecto hover para tarjeta */
 .card:hover {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 
+/* Encabezado de tarjeta */
 .card-header {
     padding: 1.5rem 1.5rem 0;
 }
 
+/* Cuerpo de tarjeta */
 .card-body {
     padding: 1.5rem;
 }
 
+/* Pie de tarjeta */
 .card-footer {
     padding: 0 1.5rem 1.5rem;
 }
 
-/* Event Card */
+/* Tarjeta de Evento */
 .event-card {
     background: white;
     border-radius: 0.75rem;
@@ -36,16 +40,19 @@
     position: relative;
 }
 
+/* Efecto hover para tarjeta de evento */
 .event-card:hover {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 
+/* Contenedor de imagen de evento */
 .event-image-container {
     position: relative;
     overflow: hidden;
 }
 
+/* Imagen de evento */
 .event-image {
     width: 100%;
     height: 12rem;
@@ -53,10 +60,12 @@
     transition: transform 0.3s ease;
 }
 
+/* Efecto hover para imagen de evento */
 .event-card:hover .event-image {
     transform: scale(1.05);
 }
 
+/* Contenedor de insignias de evento */
 .event-badges {
     position: absolute;
     top: 0.75rem;
@@ -67,10 +76,12 @@
     align-items: flex-start;
 }
 
+/* Contenido de evento */
 .event-content {
     padding: 1.5rem;
 }
 
+/* Título de evento */
 .event-title {
     font-size: 1.25rem;
     font-weight: 700;
@@ -80,10 +91,12 @@
     transition: color 0.2s ease;
 }
 
+/* Efecto hover para título de evento */
 .event-card:hover .event-title {
     color: #2563eb;
 }
 
+/* Descripción de evento */
 .event-description {
     color: #6b7280;
     margin-bottom: 1rem;
@@ -94,6 +107,7 @@
     overflow: hidden;
 }
 
+/* Detalles de evento */
 .event-details {
     display: flex;
     flex-direction: column;
@@ -131,6 +145,7 @@
     color: #ea580c;
 }
 
+/* Meta de evento */
 .event-meta {
     display: flex;
     flex-direction: column;
@@ -138,6 +153,7 @@
     margin-bottom: 1rem;
 }
 
+/* Precio de evento */
 .event-price {
     display: flex;
     align-items: center;
@@ -152,6 +168,7 @@
     height: 1.25rem;
 }
 
+/* Barra de progreso */
 .progress-bar {
     width: 100%;
     height: 0.5rem;
@@ -167,12 +184,13 @@
     transition: width 0.3s ease;
 }
 
+/* Acciones de evento */
 .event-actions {
     display: flex;
     gap: 0.75rem;
 }
 
-/* Stat Card */
+/* Tarjeta de Estadísticas */
 .stat-card {
     border-radius: 0.5rem;
     padding: 1.5rem;
@@ -230,7 +248,7 @@
     color: #ea580c;
 }
 
-/* Profile Card */
+/* Tarjeta de Perfil */
 .profile-card {
     background: white;
     border-radius: 0.75rem;
@@ -246,7 +264,7 @@
     margin-bottom: 1rem;
 }
 
-/* Settings Card */
+/* Tarjeta de Configuración */
 .settings-card {
     background: white;
     border-radius: 0.75rem;
@@ -262,6 +280,7 @@
     margin-bottom: 1rem;
 }
 
+/* Zona de peligro */
 .danger-zone {
     border-color: #fecaca;
     background: #fef2f2;

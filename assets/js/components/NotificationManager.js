@@ -1,4 +1,4 @@
-// Notification Manager Component - Redesigned
+// Componente Gestor de Notificaciones - Rediseñado
 import { NOTIFICATION_TYPES } from '../utils/constants.js';
 import { createElement } from '../utils/helpers.js';
 
@@ -9,6 +9,7 @@ export class NotificationManager {
         this.maxNotifications = 5;
     }
 
+    // Crear el contenedor de notificaciones en el DOM
     createContainer() {
         let container = document.getElementById('notifications');
         if (!container) {
@@ -19,6 +20,7 @@ export class NotificationManager {
         return container;
     }
 
+    // Agregar una notificación
     addNotification(message, type = NOTIFICATION_TYPES.INFO, duration = 5000, actions = null) {
         const id = Math.random().toString(36).substr(2, 9);
         const notification = { id, message, type, duration, actions };
@@ -26,7 +28,7 @@ export class NotificationManager {
         this.notifications.push(notification);
         this.renderNotification(notification);
 
-        // Remove oldest notifications if we exceed the limit
+        // Eliminar las notificaciones más antiguas si se supera el límite
         if (this.notifications.length > this.maxNotifications) {
             const oldestId = this.notifications[0].id;
             this.removeNotification(oldestId);
@@ -41,6 +43,7 @@ export class NotificationManager {
         return id;
     }
 
+    // Eliminar una notificación por ID
     removeNotification(id) {
         this.notifications = this.notifications.filter(n => n.id !== id);
         const element = document.getElementById(`notification-${id}`);
@@ -54,12 +57,14 @@ export class NotificationManager {
         }
     }
 
+    // Eliminar todas las notificaciones
     removeAllNotifications() {
         this.notifications.forEach(notification => {
             this.removeNotification(notification.id);
         });
     }
 
+    // Renderizar una notificación en el DOM
     renderNotification(notification) {
         const notificationElement = createElement('div', `notification notification-${notification.type}`);
         notificationElement.id = `notification-${notification.id}`;
@@ -103,7 +108,7 @@ export class NotificationManager {
 
         this.container.appendChild(notificationElement);
 
-        // Add click handler for actions
+        // Agregar manejador de clic para las acciones
         if (notification.actions) {
             notification.actions.forEach((action, index) => {
                 const actionButton = notificationElement.querySelector(`.notification-action:nth-child(${index + 1})`);
@@ -117,6 +122,7 @@ export class NotificationManager {
         }
     }
 
+    // Obtener el ícono según el tipo de notificación
     getIcon(type) {
         switch (type) {
             case NOTIFICATION_TYPES.SUCCESS:
@@ -145,7 +151,7 @@ export class NotificationManager {
         }
     }
 
-    // Convenience methods
+    // Métodos de conveniencia para mostrar notificaciones rápidas
     success(message, duration = 5000, actions = null) {
         return this.addNotification(message, NOTIFICATION_TYPES.SUCCESS, duration, actions);
     }
@@ -162,12 +168,12 @@ export class NotificationManager {
         return this.addNotification(message, NOTIFICATION_TYPES.WARNING, duration, actions);
     }
 
-    // Persistent notification (doesn't auto-dismiss)
+    // Notificación persistente (no se cierra automáticamente)
     persistent(message, type = NOTIFICATION_TYPES.INFO, actions = null) {
         return this.addNotification(message, type, 0, actions);
     }
 
-    // Update existing notification
+    // Actualizar una notificación existente
     updateNotification(id, message, type = null) {
         const notification = this.notifications.find(n => n.id === id);
         if (notification) {
@@ -188,7 +194,7 @@ export class NotificationManager {
         }
     }
 
-    // Get notification count by type
+    // Obtener el número de notificaciones por tipo
     getNotificationCount(type = null) {
         if (type) {
             return this.notifications.filter(n => n.type === type).length;
@@ -196,12 +202,12 @@ export class NotificationManager {
         return this.notifications.length;
     }
 
-    // Check if notifications are supported
+    // Verificar si las notificaciones del navegador están soportadas
     static isSupported() {
         return 'Notification' in window;
     }
 
-    // Request browser notification permission
+    // Solicitar permiso para notificaciones del navegador
     static async requestPermission() {
         if (this.isSupported()) {
             const permission = await Notification.requestPermission();
@@ -210,7 +216,7 @@ export class NotificationManager {
         return false;
     }
 
-    // Show browser notification
+    // Mostrar una notificación del navegador
     static showBrowserNotification(title, options = {}) {
         if (this.isSupported() && Notification.permission === 'granted') {
             return new Notification(title, {

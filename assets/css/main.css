@@ -1,7 +1,7 @@
-/* Main CSS - Import all components and pages */
+/* CSS Principal - Importa todos los componentes y páginas */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Base styles */
+/* Estilos base */
 @import 'base.css';
 
 /* Layout */
@@ -9,7 +9,7 @@
 @import 'layout/footer.css';
 @import 'layout/grid.css';
 
-/* Components */
+/* Componentes */
 @import 'components/buttons.css';
 @import 'components/forms.css';
 @import 'components/cards.css';
@@ -18,7 +18,7 @@
 @import 'components/notifications.css';
 @import 'components/animations.css';
 
-/* Pages */
+/* Páginas */
 @import 'pages/auth.css';
 @import 'pages/profile.css';
 
@@ -37,10 +37,12 @@
     border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Sidebar expandida */
 .sidebar-dashboard.expanded {
     width: 350px;
 }
 
+/* Botón de alternar sidebar */
 .sidebar-toggle {
     display: flex;
     flex-direction: column;
@@ -88,6 +90,7 @@
     letter-spacing: 0.025em;
 }
 
+/* Contenido de la sidebar */
 .sidebar-content {
     padding: 1.5rem;
     height: calc(100vh - 100px);
@@ -103,6 +106,7 @@
     visibility: visible;
 }
 
+/* Encabezado de la sidebar */
 .sidebar-header {
     display: flex;
     justify-content: space-between;
@@ -119,6 +123,7 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+/* Botón para cerrar sidebar */
 .sidebar-close {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -139,6 +144,7 @@
     transform: scale(1.05) rotate(90deg);
 }
 
+/* Estadísticas en la sidebar */
 .sidebar-stats {
     display: flex;
     flex-direction: column;
@@ -232,6 +238,7 @@
     line-height: 1.4;
 }
 
+/* Próximos eventos en la sidebar */
 .sidebar-upcoming-events {
     margin-bottom: 2rem;
 }
@@ -278,6 +285,7 @@
     color: #cbd5e1;
 }
 
+/* Enlace para ver todos los eventos */
 .sidebar-view-all {
     color: #60a5fa;
     text-decoration: none;
@@ -294,6 +302,7 @@
     transform: translateX(4px);
 }
 
+/* Acciones rápidas en la sidebar */
 .sidebar-quick-actions h3 {
     color: #ffffff;
     font-size: 1rem;
@@ -359,6 +368,7 @@
     transform: scale(1.1) rotate(5deg);
 }
 
+/* Overlay de la sidebar */
 .sidebar-overlay {
     position: fixed;
     top: 0;
@@ -378,19 +388,19 @@
     visibility: visible;
 }
 
-/* Adjust main content when sidebar is present */
+/* Ajuste del contenido principal cuando la sidebar está presente */
 body {
     padding-left: 80px;
     transition: padding-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Main layout specific styles */
+/* Estilos específicos del layout principal */
 .main {
     padding: 2rem 0;
     min-height: calc(100vh - 200px);
 }
 
-/* Tabs */
+/* Pestañas */
 .tabs {
     display: flex;
     gap: 2rem;
@@ -446,7 +456,7 @@ body {
     outline-offset: 2px;
 }
 
-/* Filters */
+/* Filtros */
 .filters {
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     border-radius: 0.75rem;
@@ -514,7 +524,7 @@ body {
     outline-offset: 2px;
 }
 
-/* Events Section */
+/* Sección de eventos */
 .events-section {
     margin-bottom: 1.5rem;
 }
@@ -537,7 +547,7 @@ body {
     color: #6b7280;
 }
 
-/* No Events */
+/* Estado sin eventos */
 .no-events {
     text-align: center;
     padding: 3rem 1rem;
@@ -565,7 +575,7 @@ body {
     margin: 0 auto 1rem;
 }
 
-/* Auth state visibility */
+/* Visibilidad según estado de autenticación */
 .auth-only {
     display: none;
 }
@@ -582,7 +592,7 @@ body {
     display: none;
 }
 
-/* Custom scrollbar for sidebar */
+/* Scrollbar personalizado para sidebar */
 .sidebar-content::-webkit-scrollbar {
     width: 4px;
 }
@@ -601,7 +611,7 @@ body {
     background: rgba(255, 255, 255, 0.3);
 }
 
-/* Responsive design */
+/* Diseño responsivo */
 @media (max-width: 1024px) {
     body {
         padding-left: 0;
@@ -659,7 +669,7 @@ body {
     }
 }
 
-/* Accessibility improvements */
+/* Accesibilidad: reducir movimiento */
 @media (prefers-reduced-motion: reduce) {
     .sidebar-dashboard,
     .sidebar-content,
@@ -672,7 +682,7 @@ body {
     }
 }
 
-/* High contrast mode support */
+/* Soporte para alto contraste */
 @media (prefers-contrast: high) {
     .sidebar-dashboard {
         background: #000000;

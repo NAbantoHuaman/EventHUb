@@ -1,4 +1,4 @@
-// UI Manager Component 
+// Componente Gestor de Interfaz de Usuario
 import { createElement, addClass, removeClass, toggleClass } from '../utils/helpers.js';
 import { formatDate, formatPrice } from '../utils/helpers.js';
 
@@ -8,15 +8,16 @@ export class UIManager {
         this.activeTab = 'all';
     }
 
+    // Crear tarjeta de evento
     createEventCard(event, isRegistered = false) {
-        console.log(`🎨 UIManager: Creating card for event "${event.name}" (${event.id})`);
-        console.log(`📊 UIManager: isRegistered parameter: ${isRegistered}`);
+        console.log(`🎨 UIManager: Creando tarjeta para el evento "${event.name}" (${event.id})`);
+        console.log(`📊 UIManager: parámetro isRegistered: ${isRegistered}`);
         
         const isPast = new Date(event.date) <= new Date();
         const isFull = event.registered >= event.capacity;
         const progressPercentage = (event.registered / event.capacity) * 100;
 
-        console.log(`📊 UIManager: Event state - isPast: ${isPast}, isFull: ${isFull}, isRegistered: ${isRegistered}`);
+        console.log(`📊 UIManager: Estado del evento - isPast: ${isPast}, isFull: ${isFull}, isRegistered: ${isRegistered}`);
 
         let statusBadge;
         if (isPast) {
@@ -25,10 +26,10 @@ export class UIManager {
             statusBadge = '<span class="badge badge-full">Lleno</span>';
         } else if (isRegistered) {
             statusBadge = '<span class="badge badge-registered">✓ Inscrito</span>';
-            console.log(`✅ UIManager: Event ${event.id} will show REGISTERED badge`);
+            console.log(`✅ UIManager: El evento ${event.id} mostrará la insignia INSCRITO`);
         } else {
             statusBadge = '<span class="badge badge-available">Disponible</span>';
-            console.log(`📊 UIManager: Event ${event.id} will show AVAILABLE badge`);
+            console.log(`📊 UIManager: El evento ${event.id} mostrará la insignia DISPONIBLE`);
         }
 
         let actionButtons = '';
@@ -50,14 +51,14 @@ export class UIManager {
                     Cancelar inscripción
                 </button>
             `;
-            console.log(`✅ UIManager: Event ${event.id} will show UNREGISTER button`);
+            console.log(`✅ UIManager: El evento ${event.id} mostrará el botón CANCELAR INSCRIPCIÓN`);
         } else {
             actionButtons = `
                 <button class="btn btn-secondary" onclick="registerForEvent('${event.id}')">
                     Inscribirse
                 </button>
             `;
-            console.log(`📊 UIManager: Event ${event.id} will show REGISTER button`);
+            console.log(`📊 UIManager: El evento ${event.id} mostrará el botón INSCRIBIRSE`);
         }
 
         const cardHtml = `
@@ -128,15 +129,15 @@ export class UIManager {
             </article>
         `;
 
-        console.log(`✅ UIManager: Card created for event ${event.id} with registration state: ${isRegistered}`);
+        console.log(`✅ UIManager: Tarjeta creada para el evento ${event.id} con estado de inscripción: ${isRegistered}`);
         return cardHtml;
     }
 
-    // Tab Management
+    // Gestión de pestañas
     switchTab(tabName) {
         this.activeTab = tabName;
         
-        // Update tab buttons
+        // Actualizar botones de pestañas
         const tabButtons = document.querySelectorAll('.tab-button');
         tabButtons.forEach(button => {
             button.classList.toggle('active', button.dataset.tab === tabName);
@@ -145,7 +146,7 @@ export class UIManager {
         return tabName;
     }
 
-    // Filter UI Updates
+    // Actualización de filtros en la interfaz
     updateFilterOptions(categories, locations) {
         this.updateCategoryFilter(categories);
         this.updateLocationFilter(locations);
@@ -177,37 +178,37 @@ export class UIManager {
         }
     }
 
-    // Stats Updates
+    // Actualización de estadísticas
     updateStats(stats) {
         this.updateElement('total-events', stats.total);
         this.updateElement('available-events', stats.available);
         this.updateElement('categories-count', stats.categories);
     }
 
-    // Enhanced count updates with animation
+    // Actualización de contadores con animación
     updateCounts(allCount, registeredCount, filteredCount) {
-        console.log('📊 UIManager: Updating counts:', { allCount, registeredCount, filteredCount });
+        console.log('📊 UIManager: Actualizando contadores:', { allCount, registeredCount, filteredCount });
         
-        // Update tab counts with animation
+        // Actualizar contadores de pestañas con animación
         this.animateCountUpdate('all-count', allCount);
         this.animateCountUpdate('registered-count', registeredCount);
         
-        // Update events found count
+        // Actualizar contador de eventos encontrados
         this.updateElement('events-found', `${filteredCount} eventos encontrados`);
     }
 
-    // Animate count updates
+    // Animar actualización de contadores
     animateCountUpdate(elementId, newValue) {
         const element = document.getElementById(elementId);
         if (!element) return;
         
         const currentValue = parseInt(element.textContent) || 0;
         
-        // Only animate if value changed
+        // Solo animar si el valor cambió
         if (currentValue !== newValue) {
-            console.log(`🎬 UIManager: Animating ${elementId} from ${currentValue} to ${newValue}`);
+            console.log(`🎬 UIManager: Animando ${elementId} de ${currentValue} a ${newValue}`);
             
-            // Add pulse animation
+            // Agregar animación de pulso
             element.style.transform = 'scale(1.2)';
             element.style.transition = 'transform 0.2s ease, color 0.2s ease';
             element.style.color = 'var(--primary-600)';
@@ -226,7 +227,7 @@ export class UIManager {
         }
     }
 
-    // Utility Methods
+    // Métodos utilitarios
     updateElement(id, content) {
         const element = document.getElementById(id);
         if (element) {
@@ -256,7 +257,7 @@ export class UIManager {
         }
     }
 
-    // Loading States
+    // Estados de carga
     setButtonLoading(button, loading) {
         if (!button) return;
         
@@ -269,7 +270,7 @@ export class UIManager {
         }
     }
 
-    // Empty States
+    // Estados vacíos
     showEmptyState(container, title, message, showButton = false) {
         if (!container) return;
         
@@ -288,7 +289,7 @@ export class UIManager {
         `;
     }
 
-    // Animation Helpers
+    // Ayudantes de animación
     fadeIn(element, duration = 300) {
         if (!element) return;
         

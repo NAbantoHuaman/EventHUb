@@ -1,11 +1,9 @@
-/* Enhanced Animations and Transitions */
-
-/* Base transition settings */
+/* Configuración base de transición */
 * {
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Smooth transitions for interactive elements */
+/* Transiciones suaves para elementos interactivos */
 .btn,
 .card,
 .event-card,
@@ -18,7 +16,7 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Enhanced hover animations */
+/* Animaciones de hover */
 .event-card:hover {
     transform: translateY(-8px) scale(1.02);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -39,7 +37,7 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* Tab animations */
+/* Animaciones de pestañas */
 .tab-button {
     position: relative;
     overflow: hidden;
@@ -64,7 +62,7 @@
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.02) 100%);
 }
 
-/* Modal animations */
+/* Animaciones de modales */
 .modal {
     backdrop-filter: blur(0px);
     transition: backdrop-filter 0.3s ease, opacity 0.3s ease;
@@ -85,7 +83,7 @@
     opacity: 1;
 }
 
-/* Notification animations */
+/* Animaciones de notificaciones */
 @keyframes slideInRight {
     from {
         transform: translateX(100%);
@@ -133,7 +131,7 @@
     animation: slideOutRight 0.3s ease-in forwards;
 }
 
-/* Sidebar animations */
+/* Animaciones de barra lateral */
 .sidebar-dashboard {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -146,7 +144,7 @@
     transition: all 0.3s ease;
 }
 
-/* Loading animations */
+/* Animaciones de carga */
 @keyframes pulse {
     0%, 100% {
         opacity: 1;
@@ -175,12 +173,12 @@
     animation: shimmer 1.5s infinite;
 }
 
-/* Progress bar animations */
+/* Animaciones de barra de progreso */
 .progress-fill {
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Badge animations */
+/* Animaciones de insignias */
 .badge {
     transition: all 0.2s ease;
 }
@@ -189,7 +187,7 @@
     transform: scale(1.05);
 }
 
-/* Form animations */
+/* Animaciones de formularios */
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -197,7 +195,7 @@
     box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
 }
 
-/* Switch animations */
+/* Animaciones de interruptores */
 .switch {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -206,7 +204,7 @@
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Card stack animation */
+/* Animación de pila de tarjetas */
 @keyframes cardStack {
     0% {
         transform: translateY(20px) scale(0.95);
@@ -229,7 +227,7 @@
 .events-grid .event-card:nth-child(5) { animation-delay: 0.5s; }
 .events-grid .event-card:nth-child(6) { animation-delay: 0.6s; }
 
-/* Micro-interactions */
+/* Micro-interacciones */
 .user-avatar {
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -246,7 +244,7 @@
     transform: scale(1.1) rotate(-5deg);
 }
 
-/* Ripple effect for buttons */
+/* Efecto ripple para botones */
 .btn {
     position: relative;
     overflow: hidden;
@@ -270,7 +268,7 @@
     height: 300px;
 }
 
-/* Stagger animations for lists */
+/* Animaciones escalonadas para listas */
 .upcoming-events-list .upcoming-event-item,
 .activity-list .activity-item {
     opacity: 0;
@@ -289,7 +287,7 @@
     }
 }
 
-/* Focus animations */
+/* Animaciones de enfoque */
 .focus-ring:focus {
     animation: focusPulse 0.6s ease;
 }
@@ -306,7 +304,7 @@
     }
 }
 
-/* Reduced motion support */
+/* Soporte para reducción de movimiento */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -318,7 +316,7 @@
     }
 }
 
-/* High contrast mode adjustments */
+/* Ajustes para alto contraste */
 @media (prefers-contrast: high) {
     .btn:hover,
     .card:hover,
