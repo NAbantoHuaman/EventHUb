@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub - Gestión de Eventos</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+    <!-- Sidebar Dashboard -->
+    <aside class="sidebar-dashboard" id="sidebar-dashboard">
+        <div class="sidebar-toggle" id="sidebar-toggle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span class="sidebar-toggle-text">Panel</span>
+        </div>
+        
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                <h2>Panel de Control</h2>
+                <button class="sidebar-close" id="sidebar-close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="sidebar-stats">
+                <div class="sidebar-stat-card stat-available">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <p class="stat-label">Eventos disponibles</p>
+                        <p class="stat-value" id="available-events">0</p>
+                        <p class="stat-description">Eventos activos para inscripción</p>
+                    </div>
+                </div>
+                
+                <div class="sidebar-stat-card stat-registered">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <p class="stat-label">Mis inscripciones</p>
+                        <p class="stat-value" id="registered-events">0</p>
+                        <p class="stat-description">Eventos en los que estás inscrito</p>
+                    </div>
+                </div>
+                
+                <div class="sidebar-stat-card stat-total">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <p class="stat-label">Total de eventos</p>
+                        <p class="stat-value" id="total-events">0</p>
+                        <p class="stat-description">Eventos en la plataforma</p>
+                    </div>
+                </div>
+                
+                <div class="sidebar-stat-card stat-categories">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <p class="stat-label">Categorías</p>
+                        <p class="stat-value" id="categories-count">0</p>
+                        <p class="stat-description">Categorías disponibles</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upcoming Events (solo para usuarios autenticados) -->
+            <div id="sidebar-upcoming-events" class="sidebar-upcoming-events auth-only" style="display: none;">
+                <h3>Próximos eventos</h3>
+                <div id="sidebar-upcoming-events-list" class="sidebar-upcoming-events-list"></div>
+                <a href="#" class="sidebar-view-all" id="sidebar-view-all-events">Ver todos mis eventos →</a>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="sidebar-quick-actions">
+                <h3>Acciones rápidas</h3>
+                <div class="quick-actions-grid">
+                    <button class="quick-action-btn" id="quick-filter-today">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                        Eventos hoy
+                    </button>
+                    <button class="quick-action-btn" id="quick-filter-week">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Esta semana
+                    </button>
+                    <button class="quick-action-btn" id="quick-filter-free">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        Eventos gratis
+                    </button>
+                    <button class="quick-action-btn auth-only" id="quick-my-events">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Mis eventos
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>EventHub</h1>
+                        <p>Gestión profesional de eventos</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <!-- Botones para usuarios no autenticados -->
+                    <div class="auth-buttons guest-only" id="auth-buttons">
+                        <a href="login.html" class="btn btn-secondary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                <polyline points="10,17 15,12 10,7"/>
+                                <line x1="15" y1="12" x2="3" y2="12"/>
+                            </svg>
+                            Iniciar Sesión
+                        </a>
+                        <a href="register.html" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="8.5" cy="7" r="4"/>
+                                <line x1="20" y1="8" x2="20" y2="14"/>
+                                <line x1="23" y1="11" x2="17" y2="11"/>
+                            </svg>
+                            Registrarse
+                        </a>
+                    </div>
+
+                    <!-- Menú de usuario para usuarios autenticados -->
+                    <div class="user-menu auth-only" id="user-menu">
+                        <button class="user-menu-trigger" id="user-menu-trigger">
+                            <div class="user-avatar" id="user-avatar">
+                                <span id="user-initials">U</span>
+                            </div>
+                            <span id="user-name-header">Usuario</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6,9 12,15 18,9"/>
+                            </svg>
+                        </button>
+                        <div class="user-menu-dropdown" id="user-menu-dropdown">
+                            <a href="profile.html" class="menu-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                Mi Perfil
+                            </a>
+                            <a href="index.html" class="menu-item active">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="16" y1="2" x2="16" y2="6"/>
+                                    <line x1="8" y1="2" x2="8" y2="6"/>
+                                    <line x1="3" y1="10" x2="21" y2="10"/>
+                                </svg>
+                                Eventos
+                            </a>
+                            <div class="menu-divider"></div>
+                            <button class="menu-item logout-btn" id="logout-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16,17 21,12 16,7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Tabs -->
+            <nav class="tabs">
+                <button class="tab-button active" data-tab="all" id="tab-all">
+                    Todos los eventos (<span id="all-count">0</span>)
+                </button>
+                <button class="tab-button auth-only" data-tab="registered" id="tab-registered">
+                    Mis inscripciones (<span id="registered-count">0</span>)
+                </button>
+            </nav>
+
+            <!-- Filters -->
+            <section class="filters">
+                <div class="filters-header">
+                    <div class="filters-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
+                        </svg>
+                        <h2>Filtrar eventos</h2>
+                    </div>
+                    <button id="clear-filters" class="clear-filters" style="display: none;">
+                        Limpiar filtros
+                    </button>
+                </div>
+                <div class="filters-grid">
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                            </svg>
+                            <input type="text" id="search-input" placeholder="Buscar eventos..." aria-label="Buscar eventos">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="select-with-icon">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                                <line x1="7" y1="7" x2="7.01" y2="7"/>
+                            </svg>
+                            <select id="category-filter" aria-label="Filtrar por categoría">
+                                <option value="all">Todas las categorías</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="select-with-icon">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <select id="location-filter" aria-label="Filtrar por ubicación">
+                                <option value="all">Todas las ubicaciones</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="select-with-icon">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            <select id="date-filter" aria-label="Filtrar por fecha">
+                                <option value="">Cualquier fecha</option>
+                                <option value="today">Hoy</option>
+                                <option value="week">Esta semana</option>
+                                <option value="month">Este mes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Events Section -->
+            <section class="events-section">
+                <div class="events-header">
+                    <h2 id="events-title">Eventos disponibles</h2>
+                    <span id="events-found" class="events-count">0 eventos encontrados</span>
+                </div>
+                
+                <div id="events-grid" class="events-grid"></div>
+                
+                <div id="no-events" class="no-events" style="display: none;">
+                    <svg class="no-events-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    <h3 id="no-events-title">No se encontraron eventos</h3>
+                    <p id="no-events-message">Intenta ajustar los filtros para encontrar eventos que te interesen.</p>
+                    <button id="show-all-events" class="btn btn-primary" style="display: none;">
+                        Ver todos los eventos
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Event Details Modal -->
+    <div id="event-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="modal-image" src="" alt="" class="modal-image">
+                <button id="close-modal" class="close-button" aria-label="Cerrar detalles del evento">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+                <div class="modal-badges">
+                    <span id="modal-category" class="badge badge-category"></span>
+                    <span id="modal-registered" class="badge badge-registered" style="display: none;">✓ Inscrito</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <h1 id="modal-title" class="modal-title"></h1>
+                <div class="modal-layout">
+                    <div class="modal-main">
+                        <section class="modal-description">
+                            <h2 class="section-title">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="16" x2="12" y2="12"/>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                </svg>
+                                Descripción del evento
+                            </h2>
+                            <p id="modal-description"></p>
+                        </section>
+                        <div id="modal-alerts" class="modal-alerts"></div>
+                    </div>
+                    <div class="modal-sidebar">
+                        <div class="event-info">
+                            <h2>Información del evento</h2>
+                            <div class="info-list">
+                                <div class="info-item">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="16" y1="2" x2="16" y2="6"/>
+                                        <line x1="8" y1="2" x2="8" y2="6"/>
+                                        <line x1="3" y1="10" x2="21" y2="10"/>
+                                    </svg>
+                                    <div>
+                                        <p class="info-label">Fecha y hora</p>
+                                        <p id="modal-date" class="info-value"></p>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    <div>
+                                        <p class="info-label">Ubicación</p>
+                                        <p id="modal-location" class="info-value"></p>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    <div>
+                                        <p class="info-label">Organizador</p>
+                                        <p id="modal-organizer" class="info-value"></p>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                    </svg>
+                                    <div>
+                                        <p class="info-label">Capacidad</p>
+                                        <p id="modal-capacity" class="info-value"></p>
+                                        <div class="progress-bar">
+                                            <div id="modal-progress" class="progress-fill"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="1" x2="12" y2="23"/>
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                    </svg>
+                                    <div>
+                                        <p class="info-label">Precio</p>
+                                        <p id="modal-price" class="info-value price"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-actions">
+                                <button id="modal-action-btn" class="btn btn-primary"></button>
+                                <button id="modal-close-btn" class="btn btn-secondary">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notifications" class="notifications"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <div class="logo-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                    </div>
+                    <span>EventHub</span>
+                </div>
+                <p>Plataforma profesional para la gestión y participación en eventos.</p>
+                <p class="footer-tech">Desarrollado con HTML, CSS y JavaScript</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="assets/js/pages/main.js"></script>
+
+</body>
+</html>

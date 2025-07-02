@@ -1,0 +1,192 @@
+/* Notification Components */
+.notifications {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 24rem;
+}
+
+.notification {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    animation: slideIn 0.3s ease;
+    background: white;
+}
+
+.notification-success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.notification-error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.notification-info {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e40af;
+}
+
+.notification-warning {
+    background: #fffbeb;
+    border-color: #fed7aa;
+    color: #92400e;
+}
+
+.notification-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.notification-message {
+    flex: 1;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    margin-left: 1rem;
+    flex-shrink: 0;
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.notification-close:hover {
+    opacity: 1;
+}
+
+.notification-close:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* Toast animations */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.notification.slide-out {
+    animation: slideOut 0.3s ease forwards;
+}
+
+/* Notification with actions */
+.notification-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.notification-action {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+}
+
+.notification-action:hover {
+    background: currentColor;
+    color: white;
+}
+
+.notification-action.primary {
+    background: currentColor;
+    color: white;
+}
+
+.notification-action.primary:hover {
+    opacity: 0.9;
+}
+
+/* Responsive notifications */
+@media (max-width: 768px) {
+    .notifications {
+        left: 0.5rem;
+        right: 0.5rem;
+        top: 0.5rem;
+        max-width: none;
+    }
+    
+    .notification {
+        max-width: none;
+    }
+}
+
+/* Notification types with icons */
+.notification-with-icon {
+    position: relative;
+    padding-left: 3rem;
+}
+
+.notification-with-icon::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.notification-success.notification-with-icon::before {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23166534'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7'/%3e%3c/svg%3e");
+}
+
+.notification-error.notification-with-icon::before {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23b91c1c'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'/%3e%3c/svg%3e");
+}
+
+.notification-info.notification-with-icon::before {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231e40af'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'/%3e%3c/svg%3e");
+}
+
+.notification-warning.notification-with-icon::before {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2392400e'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z'/%3e%3c/svg%3e");
+}
