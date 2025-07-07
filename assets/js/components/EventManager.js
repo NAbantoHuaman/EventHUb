@@ -1,18 +1,12 @@
-// Event Manager Component - Redesigned + Storage
 import { generateId, formatDate, formatPrice } from '../utils/helpers.js';
 import { EVENT_CATEGORIES, STORAGE_KEYS } from '../utils/constants.js';
 import { StorageManager } from '../utils/storage.js';
+import { BaseDataManager } from './BaseManager.js';
 
-export class EventManager {
+export class EventManager extends BaseDataManager {
     constructor() {
-        const savedEvents = StorageManager.get(STORAGE_KEYS.events, null);
-        this.events = savedEvents || this.loadMockEvents();
-
-        if (!savedEvents) {
-            StorageManager.set(STORAGE_KEYS.events, this.events);
-        }
-
-        this.filteredEvents = [...this.events];
+        super('EventManager', 'events');
+        this.filteredEvents = [];
         this.currentFilters = {
             search: '',
             category: 'all',
@@ -21,8 +15,56 @@ export class EventManager {
         };
     }
 
+    async setup() {
+        this.addDependency('StorageManager');
+    }
+
+    async loadData() {
+        await this.loadEvents();
+    }
+
+    async loadEvents() {
+        try {
+            const storedEvents = StorageManager.get(STORAGE_KEYS.events) || [];
+            
+            if (storedEvents.length === 0) {
+                console.log('📦 EventManager: No hay eventos almacenados, cargando eventos mock...');
+                const mockEvents = this.loadMockEvents();
+                this.data = new Map();
+                mockEvents.forEach(event => {
+                    this.data.set(event.id, event);
+                });
+                await this.saveData();
+            } else {
+                console.log(`📦 EventManager: Cargando ${storedEvents.length} eventos desde almacenamiento...`);
+                this.data = new Map();
+                storedEvents.forEach(eventData => {
+                    this.data.set(eventData.id, eventData);
+                });
+            }
+            
+            this.filteredEvents = Array.from(this.data.values());
+            console.log(`✅ EventManager: ${this.data.size} eventos cargados`);
+        } catch (error) {
+            console.error('❌ EventManager: Error cargando eventos:', error);
+            throw error;
+        }
+    }
+
+    async saveData() {
+        try {
+            const eventsArray = Array.from(this.data.values());
+            StorageManager.set(STORAGE_KEYS.events, eventsArray);
+            console.log(`💾 EventManager: ${eventsArray.length} eventos guardados`);
+            this.isDirty = false;
+        } catch (error) {
+            console.error('❌ EventManager: Error guardando eventos:', error);
+            throw error;
+        }
+    }
+
     saveEvents() {
-        StorageManager.set(STORAGE_KEYS.events, this.events);
+        this.saveData();
     }
 
     loadMockEvents() {
@@ -233,7 +275,7 @@ export class EventManager {
     }
 
     getAllEvents() {
-        return this.events;
+        return Array.from(this.data.values());
     }
 
     getFilteredEvents() {
@@ -241,13 +283,13 @@ export class EventManager {
     }
 
     getEventById(id) {
-        return this.events.find(event => event.id === id);
+        return this.data.get(id);
     }
 
     applyFilters(filters) {
         this.currentFilters = { ...this.currentFilters, ...filters };
 
-        this.filteredEvents = this.events.filter(event => {
+        this.filteredEvents = Array.from(this.data.values()).filter(event => {
             const matchesSearch = !this.currentFilters.search || 
                 event.name.toLowerCase().includes(this.currentFilters.search.toLowerCase()) ||
                 event.description.toLowerCase().includes(this.currentFilters.search.toLowerCase()) ||
@@ -297,7 +339,7 @@ export class EventManager {
             location: 'all',
             date: ''
         };
-        this.filteredEvents = [...this.events];
+        this.filteredEvents = Array.from(this.data.values());
         return this.filteredEvents;
     }
 
@@ -306,17 +348,18 @@ export class EventManager {
     }
 
     getLocations() {
-        const locations = [...new Set(this.events.map(event => event.location))];
+        const locations = [...new Set(Array.from(this.data.values()).map(event => event.location))];
         return locations.sort();
     }
 
     getEventStats() {
-        const totalEvents = this.events.length;
+        const events = Array.from(this.data.values());
+        const totalEvents = events.length;
         const now = new Date();
-        const availableEvents = this.events.filter(event => 
+        const availableEvents = events.filter(event => 
             event.registered < event.capacity && new Date(event.date) > now
         ).length;
-        const totalRegistrations = this.events.reduce((sum, event) => sum + event.registered, 0);
+        const totalRegistrations = events.reduce((sum, event) => sum + event.registered, 0);
         const categories = this.getCategories().length;
 
         return {
@@ -329,7 +372,7 @@ export class EventManager {
 
     getUpcomingEvents(limit = 5) {
         const now = new Date();
-        return this.events
+        return Array.from(this.data.values())
             .filter(event => new Date(event.date) > now)
             .sort((a, b) => new Date(a.date) - new Date(b.date))
             .slice(0, limit);
@@ -352,10 +395,10 @@ export class EventManager {
     }
 
     searchEvents(query) {
-        if (!query) return this.events;
+        if (!query) return Array.from(this.data.values());
 
         const searchTerm = query.toLowerCase();
-        return this.events.filter(event =>
+        return Array.from(this.data.values()).filter(event =>
             event.name.toLowerCase().includes(searchTerm) ||
             event.description.toLowerCase().includes(searchTerm) ||
             event.category.toLowerCase().includes(searchTerm) ||
@@ -408,6 +451,7 @@ export class EventManager {
             } else {
                 event.registered = Math.max(event.registered - 1, 0);
             }
+            this.isDirty = true;
             this.saveEvents();
             return true;
         }
@@ -415,8 +459,9 @@ export class EventManager {
     }
 
     addEvent(eventData) {
-        this.events.push(eventData);
-        this.filteredEvents = [...this.events];
+        this.data.set(eventData.id, eventData);
+        this.filteredEvents = Array.from(this.data.values());
+        this.isDirty = true;
         this.saveEvents();
     }
 }

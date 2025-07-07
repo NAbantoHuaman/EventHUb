@@ -5,16 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eventopia - Gestión de Eventos</title>
     <link rel="stylesheet" href="assets/css/main.css">
+    <script type="module" src="assets/js/pages/main.js" defer></script>
 </head>
 <body>
-    <!-- Barra lateral del panel de control -->
+
     <aside class="sidebar-dashboard" id="sidebar-dashboard">
         <div class="sidebar-toggle" id="sidebar-toggle">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="sidebarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <circle cx="12" cy="12" r="11" fill="url(#sidebarGradient)"/>
+                <path d="M12 5l1.5 3.5L17 9.5l-2.75 2.5L15 16l-3-1.5L9 16l0.75-3.5L7 9.5l3.5-1z" fill="white" opacity="0.9"/>
             </svg>
             <span class="sidebar-toggle-text">Panel</span>
         </div>
@@ -31,14 +36,13 @@
             </div>
             
             <div class="sidebar-stats">
-                <!-- Tarjetas de estadísticas -->
+
                 <div class="sidebar-stat-card stat-available">
                     <div class="stat-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="16" y1="2" x2="16" y2="6"/>
-                            <line x1="8" y1="2" x2="8" y2="6"/>
-                            <line x1="3" y1="10" x2="21" y2="10"/>
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M8 12l2 2 4-4"/>
+                            <circle cx="12" cy="8" r="2" fill="currentColor"/>
                         </svg>
                     </div>
                     <div class="stat-info">
@@ -60,7 +64,7 @@
                     <div class="stat-info">
                         <p class="stat-label">Mis inscripciones</p>
                         <p class="stat-value" id="registered-events">0</p>
-                        <p class="stat-description">Eventos en los que estás inscrito</p>
+                        <p class="stat-description">Total de inscripciones (regulares + personalizadas)</p>
                     </div>
                 </div>
                 
@@ -93,14 +97,14 @@
                 </div>
             </div>
             
-            <!-- Próximos eventos (solo para usuarios autenticados) -->
+
             <div id="sidebar-upcoming-events" class="sidebar-upcoming-events auth-only" style="display: none;">
                 <h3>Próximos eventos</h3>
                 <div id="sidebar-upcoming-events-list" class="sidebar-upcoming-events-list"></div>
                 <a href="#" class="sidebar-view-all" id="sidebar-view-all-events">Ver todos mis eventos →</a>
             </div>
             
-            <!-- Acciones rápidas -->
+
             <div class="sidebar-quick-actions">
                 <h3>Acciones rápidas</h3>
                 <div class="quick-actions-grid">
@@ -139,20 +143,52 @@
         </div>
     </aside>
 
-    <!-- Capa oscura del sidebar -->
+
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-    <!-- Encabezado -->
+
     <header class="header">
         <div class="container">
             <div class="header-content">
                 <div class="logo-section">
                     <div class="logo-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="16" y1="2" x2="16" y2="6"/>
-                            <line x1="8" y1="2" x2="8" y2="6"/>
-                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                
+                            <defs>
+                                <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+                                </linearGradient>
+                                <filter id="glow">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                    <feMerge> 
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/> 
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            
+                
+                            <circle cx="16" cy="16" r="15" fill="url(#logoGradient)" filter="url(#glow)"/>
+                            
+                
+                            <path d="M16 6l2.5 5.5L24 12.5l-4.25 4L21 22l-5-2.5L11 22l1.25-5.5L8 12.5l5.5-1z" 
+                                  fill="white" stroke="none" opacity="0.9"/>
+                            
+                
+                            <circle cx="10" cy="10" r="1.5" fill="white" opacity="0.7">
+                                <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="22" cy="10" r="1" fill="white" opacity="0.6">
+                                <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="10" cy="22" r="1" fill="white" opacity="0.5">
+                                <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="22" cy="22" r="1.5" fill="white" opacity="0.8">
+                                <animate attributeName="opacity" values="0.8;1;0.8" dur="1.8s" repeatCount="indefinite"/>
+                            </circle>
                         </svg>
                     </div>
                     <div class="logo-text">
@@ -161,7 +197,7 @@
                     </div>
                 </div>
                 <div class="header-actions">
-                    <!-- Botones para usuarios no autenticados -->
+
                     <div class="auth-buttons guest-only" id="auth-buttons">
                         <a href="login.html" class="btn btn-secondary">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -182,7 +218,6 @@
                         </a>
                     </div>
 
-                    <!-- Menú de usuario para usuarios autenticados -->
                     <div class="user-menu auth-only" id="user-menu">
                         <button class="user-menu-trigger" id="user-menu-trigger">
                             <div class="user-avatar" id="user-avatar">
@@ -210,6 +245,17 @@
                                 </svg>
                                 Eventos
                             </a>
+
+                            <a href="custom-registration.html" class="menu-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10,9 9,9 8,9"/>
+                                </svg>
+                                Inscripción Personalizada
+                            </a>
                             <div class="menu-divider"></div>
                             <button class="menu-item logout-btn" id="logout-btn">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -228,17 +274,41 @@
 
     <main class="main">
         <div class="container">
-            <!-- Pestañas -->
+            <section class="auth-only" style="margin-bottom: 2rem;">
+                <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 1.5rem; border-radius: 0.75rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    <div>
+                        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem; font-weight: 600;">¿Necesitas una inscripción más detallada?</h3>
+                        <p style="margin: 0; opacity: 0.9;">Completa un formulario personalizado con toda tu información para eventos especiales</p>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a href="custom-registration.html" class="btn" style="background: white; color: #2563eb; border: none; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 0.5rem; font-weight: 500;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10,9 9,9 8,9"/>
+                            </svg>
+                            Crear Inscripción
+                        </a>
+                    </div>
+                </div>
+            </section>
+
             <nav class="tabs">
                 <button class="tab-button active" data-tab="all" id="tab-all">
                     Todos los eventos (<span id="all-count">0</span>)
                 </button>
-                <button class="tab-button auth-only" data-tab="registered" id="tab-registered">
-                    Mis inscripciones (<span id="registered-count">0</span>)
-                </button>
+                <a href="my-registrations.html" class="tab-button auth-only" id="all-registrations-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-4"/>
+                        <rect x="9" y="7" width="6" height="6"/>
+                    </svg>
+                    Todas mis Inscripciones
+                </a>
             </nav>
 
-            <!-- Filtros -->
+
             <section class="filters">
                 <div class="filters-header">
                     <div class="filters-title">
@@ -302,7 +372,7 @@
                 </div>
             </section>
 
-            <!-- Sección de eventos -->
+
             <section class="events-section">
                 <div class="events-header">
                     <h2 id="events-title">Eventos disponibles</h2>
@@ -328,7 +398,7 @@
         </div>
     </main>
 
-    <!-- Modal de detalles del evento -->
+
     <div id="event-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-content">
             <div class="modal-header">
@@ -434,10 +504,10 @@
         </div>
     </div>
 
-    <!-- Notificaciones -->
+
     <div id="notifications" class="notifications"></div>
 
-    <!-- Pie de página -->
+
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -457,8 +527,6 @@
             </div>
         </div>
     </footer>
-
-    <script type="module" src="assets/js/pages/main.js"></script>
 
 </body>
 </html>

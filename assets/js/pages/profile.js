@@ -1,97 +1,32 @@
-// Sistema de perfil de usuario
-import { AuthManager } from '../components/AuthManager.js';
-import { EventManager } from '../components/EventManager.js';
-import { NotificationManager } from '../components/NotificationManager.js';
-import { RegistrationManager } from '../utils/RegistrationManager.js';
+import { BasePageManager } from '../components/BasePageManager.js';
 import { formatDate } from '../utils/helpers.js';
 
-class ProfilePageManager {
+class ProfilePageManager extends BasePageManager {
     constructor() {
-        this.authManager = new AuthManager();
-        this.eventManager = new EventManager();
-        this.notificationManager = new NotificationManager();
-        this.registrationManager = new RegistrationManager();
-        this.currentUser = null;
+        super();
         this.userRegistrations = [];
         this.activeTab = 'overview';
-        
-        this.init();
     }
-
-    async init() {
-        console.log('🚀 ProfilePageManager: Inicializando...');
-        
-        // Verificar autenticación
-        if (!this.authManager.requireAuth()) {
-            return;
-        }
-        
-        this.currentUser = this.authManager.getCurrentUser();
-        if (!this.currentUser) {
-            console.error('❌ ProfilePageManager: No se encontró usuario actual');
-            window.location.href = 'login.html';
-            return;
-        }
-        
-        console.log('✅ ProfilePageManager: Usuario encontrado:', this.currentUser.getFullName());
-        
-        // Cargar datos del usuario
+    async loadPageData() {
         await this.loadUserData();
-        
-        // Configurar eventos
-        this.setupEventListeners();
-        
-        // Actualizar UI
+    }
+    updateUI() {
+        super.updateUI();
         this.updateProfileUI();
         this.loadTabContent();
-        
-        console.log('✅ ProfilePageManager: Inicialización exitosa');
     }
 
     async loadUserData() {
         console.log('🔄 ProfilePageManager: Cargando datos del usuario...');
-        
-        // Cargar inscripciones del usuario
         this.userRegistrations = this.registrationManager.getUserRegistrations(this.currentUser.id);
         console.log('📊 ProfilePageManager: Inscripciones del usuario:', this.userRegistrations.length);
     }
-
     setupEventListeners() {
-        // Menú de usuario
-        this.setupUserMenu();
-        
-        // Pestañas de perfil
+        super.setupEventListeners();
         this.setupProfileTabs();
-        
-        // Formularios de perfil
         this.setupProfileForms();
-        
-        // Eventos del modal
         this.setupModalEvents();
-        
-        // Botón de cerrar sesión
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => this.handleLogout());
-        }
     }
-
-    setupUserMenu() {
-        const userMenuTrigger = document.getElementById('user-menu-trigger');
-        const userMenuDropdown = document.getElementById('user-menu-dropdown');
-
-        if (userMenuTrigger && userMenuDropdown) {
-            userMenuTrigger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userMenuDropdown.classList.toggle('show');
-            });
-
-            document.addEventListener('click', () => {
-                userMenuDropdown.classList.remove('show');
-            });
-        }
-    }
-
     setupProfileTabs() {
         const tabButtons = document.querySelectorAll('.tab-button');
         tabButtons.forEach(button => {
@@ -103,34 +38,28 @@ class ProfilePageManager {
     }
 
     setupProfileForms() {
-        // Formulario de información personal
         const personalInfoForm = document.getElementById('personal-info-form');
         if (personalInfoForm) {
             personalInfoForm.addEventListener('submit', (e) => this.handlePersonalInfoUpdate(e));
         }
 
-        // Formulario de contraseña
         const passwordForm = document.getElementById('password-form');
         if (passwordForm) {
             passwordForm.addEventListener('submit', (e) => this.handlePasswordChange(e));
         }
 
-        // Formulario del modal de edición de perfil
         const editProfileForm = document.getElementById('edit-profile-form');
         if (editProfileForm) {
             editProfileForm.addEventListener('submit', (e) => this.handleProfileEdit(e));
         }
 
-        // Preferencias de notificación
         this.setupNotificationPreferences();
 
-        // Botón de editar perfil
         const editProfileBtn = document.getElementById('edit-profile-btn');
         if (editProfileBtn) {
             editProfileBtn.addEventListener('click', () => this.openEditProfileModal());
         }
 
-        // Botón de eliminar cuenta
         const deleteAccountBtn = document.getElementById('delete-account-btn');
         if (deleteAccountBtn) {
             deleteAccountBtn.addEventListener('click', () => this.handleDeleteAccount());
@@ -138,7 +67,6 @@ class ProfilePageManager {
     }
 
     setupModalEvents() {
-        // Modal de edición de perfil
         const editModal = document.getElementById('edit-profile-modal');
         const closeEditModal = document.getElementById('close-edit-modal');
         const cancelEditBtn = document.getElementById('cancel-edit-btn');
@@ -159,7 +87,6 @@ class ProfilePageManager {
             });
         }
 
-        // Tecla Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.closeEditProfileModal();
@@ -182,31 +109,26 @@ class ProfilePageManager {
     updateProfileUI() {
         console.log('🔄 ProfilePageManager: Actualizando UI de perfil...');
         
-        // Actualizar info de usuario en el header
         this.updateElement('user-name-header', this.currentUser.getFullName());
         this.updateElement('user-initials', this.currentUser.getInitials());
 
-        // Actualizar encabezado de perfil
         this.updateElement('profile-name', this.currentUser.getFullName());
         this.updateElement('profile-email', this.currentUser.email);
         this.updateElement('profile-initials', this.currentUser.getInitials());
 
-        // Actualizar avatar de perfil
         const profileAvatar = document.getElementById('profile-avatar');
         if (profileAvatar) {
             profileAvatar.querySelector('span').textContent = this.currentUser.getInitials();
         }
 
-        // Actualizar estadísticas
         this.updateProfileStats();
 
-        // Actualizar campos de formularios
         this.populateFormFields();
     }
 
     updateProfileStats() {
         const registeredCount = this.userRegistrations.length;
-        const attendedCount = 0; // Esto vendría de un sistema de asistencia
+        const attendedCount = 0;
         const memberSince = new Date(this.currentUser.createdAt).getFullYear();
 
         this.updateElement('events-registered', registeredCount);
@@ -215,19 +137,16 @@ class ProfilePageManager {
     }
 
     populateFormFields() {
-        // Formulario de información personal
         this.setInputValue('edit-firstName', this.currentUser.firstName);
         this.setInputValue('edit-lastName', this.currentUser.lastName);
         this.setInputValue('edit-email', this.currentUser.email);
         this.setInputValue('edit-phone', this.currentUser.phone || '');
 
-        // Formulario del modal
         this.setInputValue('modal-firstName', this.currentUser.firstName);
         this.setInputValue('modal-lastName', this.currentUser.lastName);
         this.setInputValue('modal-email', this.currentUser.email);
         this.setInputValue('modal-phone', this.currentUser.phone || '');
 
-        // Preferencias de notificación
         const preferences = this.currentUser.preferences || {};
         this.setCheckboxValue('email-notifications', preferences.emailNotifications !== false);
         this.setCheckboxValue('event-reminders', preferences.eventReminders !== false);
@@ -239,19 +158,16 @@ class ProfilePageManager {
         
         this.activeTab = tab;
 
-        // Actualizar botones de pestaña
         const tabButtons = document.querySelectorAll('.tab-button');
         tabButtons.forEach(button => {
             button.classList.toggle('active', button.dataset.tab === tab);
         });
 
-        // Actualizar contenido de pestañas
         const tabPanes = document.querySelectorAll('.tab-pane');
         tabPanes.forEach(pane => {
             pane.classList.toggle('active', pane.id === `${tab}-content`);
         });
 
-        // Cargar contenido específico de la pestaña
         this.loadTabContent();
     }
 
@@ -264,7 +180,6 @@ class ProfilePageManager {
                 this.loadEventsContent();
                 break;
             case 'settings':
-                // El contenido de configuración ya está cargado
                 break;
         }
     }
@@ -272,13 +187,9 @@ class ProfilePageManager {
     loadOverviewContent() {
         console.log('🔄 ProfilePageManager: Cargando contenido de resumen...');
         
-        // Cargar próximos eventos
         this.loadUpcomingEvents();
         
-        // Cargar actividad reciente
         this.loadRecentActivity();
-        
-        // Cargar categorías favoritas
         this.loadFavoriteCategories();
     }
 
@@ -336,7 +247,6 @@ class ProfilePageManager {
         const container = document.getElementById('recent-activity');
         if (!container) return;
 
-        // Datos simulados de actividad reciente
         const activities = [
             {
                 type: 'registration',
@@ -377,7 +287,6 @@ class ProfilePageManager {
         const container = document.getElementById('favorite-categories');
         if (!container) return;
 
-        // Calcular categorías favoritas según inscripciones del usuario
         const allEvents = this.eventManager.getAllEvents();
         const userEvents = allEvents.filter(event => this.userRegistrations.includes(event.id));
         
@@ -489,11 +398,8 @@ class ProfilePageManager {
             </article>
         `;
     }
-
-    // Handlers de formularios
     async handlePersonalInfoUpdate(e) {
         e.preventDefault();
-        
         const formData = new FormData(e.target);
         const updates = {
             firstName: formData.get('firstName'),
@@ -501,11 +407,8 @@ class ProfilePageManager {
             email: formData.get('email'),
             phone: formData.get('phone')
         };
-
         console.log('🔄 ProfilePageManager: Actualizando información personal...');
-        
         const result = this.authManager.updateUser(this.currentUser.id, updates);
-        
         if (result.success) {
             this.currentUser = { ...this.currentUser, ...updates };
             this.updateProfileUI();
@@ -517,21 +420,16 @@ class ProfilePageManager {
 
     async handlePasswordChange(e) {
         e.preventDefault();
-        
         const formData = new FormData(e.target);
         const currentPassword = formData.get('currentPassword');
         const newPassword = formData.get('newPassword');
         const confirmNewPassword = formData.get('confirmNewPassword');
-
         if (newPassword !== confirmNewPassword) {
             this.notificationManager.error('Las contraseñas no coinciden');
             return;
         }
-
         console.log('🔄 ProfilePageManager: Cambiando contraseña...');
-        
         const result = this.authManager.changePassword(this.currentUser.id, currentPassword, newPassword);
-        
         if (result.success) {
             this.notificationManager.success('Contraseña cambiada exitosamente');
             e.target.reset();
@@ -542,7 +440,6 @@ class ProfilePageManager {
 
     async handleProfileEdit(e) {
         e.preventDefault();
-        
         const formData = new FormData(e.target);
         const updates = {
             firstName: formData.get('firstName'),
@@ -550,11 +447,8 @@ class ProfilePageManager {
             email: formData.get('email'),
             phone: formData.get('phone')
         };
-
         console.log('🔄 ProfilePageManager: Actualizando perfil desde el modal...');
-        
         const result = this.authManager.updateUser(this.currentUser.id, updates);
-        
         if (result.success) {
             this.currentUser = { ...this.currentUser, ...updates };
             this.updateProfileUI();
@@ -573,10 +467,8 @@ class ProfilePageManager {
         };
 
         console.log('🔄 ProfilePageManager: Actualizando preferencias de notificación...');
-        
         const updates = { preferences: { ...this.currentUser.preferences, ...preferences } };
         const result = this.authManager.updateUser(this.currentUser.id, updates);
-        
         if (result.success) {
             this.currentUser.preferences = updates.preferences;
             this.notificationManager.success('Preferencias de notificación actualizadas');
@@ -588,9 +480,7 @@ class ProfilePageManager {
     handleDeleteAccount() {
         if (confirm('¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')) {
             console.log('🔄 ProfilePageManager: Eliminando cuenta...');
-            
             const result = this.authManager.deleteUser(this.currentUser.id);
-            
             if (result.success) {
                 this.notificationManager.success('Cuenta eliminada exitosamente');
                 setTimeout(() => {
@@ -601,8 +491,6 @@ class ProfilePageManager {
             }
         }
     }
-
-    // Métodos del modal
     openEditProfileModal() {
         const modal = document.getElementById('edit-profile-modal');
         if (modal) {
@@ -623,19 +511,6 @@ class ProfilePageManager {
         }
     }
 
-    handleLogout() {
-        this.authManager.logout();
-        this.notificationManager.info('Sesión cerrada exitosamente');
-    }
-
-    // Métodos utilitarios
-    updateElement(id, content) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = content;
-        }
-    }
-
     setInputValue(id, value) {
         const input = document.getElementById(id);
         if (input) {
@@ -652,19 +527,13 @@ class ProfilePageManager {
 
     unregisterFromEvent(eventId) {
         console.log('🔄 ProfilePageManager: Desinscribiéndose del evento:', eventId);
-        
         const success = this.registrationManager.removeRegistration(this.currentUser.id, eventId);
-        
         if (success) {
-            // Actualizar inscripciones locales
             const index = this.userRegistrations.indexOf(eventId);
             if (index > -1) {
                 this.userRegistrations.splice(index, 1);
             }
-            
             this.notificationManager.success('Te has desinscrito del evento exitosamente');
-            
-            // Recargar contenido
             this.updateProfileStats();
             this.loadTabContent();
         } else {
@@ -673,13 +542,11 @@ class ProfilePageManager {
     }
 }
 
-// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 DOM de perfil cargado, inicializando...');
     window.profilePageManager = new ProfilePageManager();
 });
 
-// Hacer el método de desinscripción global para los botones
 window.unregisterFromEvent = (eventId) => {
     if (window.profilePageManager) {
         window.profilePageManager.unregisterFromEvent(eventId);

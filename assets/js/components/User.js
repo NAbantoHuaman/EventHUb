@@ -1,4 +1,3 @@
-// Clase Usuario - Mejorada
 import { generateId } from '../utils/helpers.js';
 
 export class User {
@@ -20,43 +19,42 @@ export class User {
         this.avatar = userData.avatar || null;
         this.role = userData.role || 'user';
         
-        // 🟡 Aún se pueden usar para compatibilidad (hasta implementar RegistrationManager)
         this.eventsRegistered = userData.eventsRegistered || []; 
     }
 
-    // Obtener nombre completo
+
     getFullName() {
         return `${this.firstName} ${this.lastName}`;
     }
 
-    // Obtener iniciales
+
     getInitials() {
         return `${this.firstName.charAt(0)}${this.lastName.charAt(0)}`.toUpperCase();
     }
 
-    // Actualizar último acceso
+
     updateLastLogin() {
         this.lastLogin = new Date().toISOString();
     }
 
-    // Actualizar preferencias del usuario
+
     updatePreferences(newPreferences) {
         this.preferences = { ...this.preferences, ...newPreferences };
     }
 
-    // Registrar usuario a un evento
+
     registerEvent(eventId) {
         if (!this.eventsRegistered.includes(eventId)) {
             this.eventsRegistered.push(eventId);
         }
     }
 
-    // Cancelar registro de usuario a un evento
+
     unregisterEvent(eventId) {
         this.eventsRegistered = this.eventsRegistered.filter(id => id !== eventId);
     }
 
-    // Obtener duración de membresía
+
     getMembershipDuration() {
         const createdDate = new Date(this.createdAt);
         const now = new Date();
@@ -67,13 +65,13 @@ export class User {
         return `${Math.floor(diffDays / 365)} año(s)`;
     }
 
-    // Verificar si es usuario nuevo
+
     isNewUser() {
         const diffDays = (new Date() - new Date(this.createdAt)) / (1000 * 60 * 60 * 24);
         return diffDays <= 7;
     }
 
-    // Obtener nivel de actividad
+
     getActivityLevel() {
         const count = this.eventsRegistered?.length || 0;
         if (count === 0) return 'Inactivo';
@@ -82,22 +80,22 @@ export class User {
         return 'Alto';
     }
 
-    // Puede recibir notificaciones
+
     canReceiveNotifications() {
         return this.preferences.emailNotifications && this.isActive;
     }
 
-    // Puede recibir recordatorios
+
     canReceiveReminders() {
         return this.preferences.eventReminders && this.isActive;
     }
 
-    // Puede recibir boletín
+
     canReceiveNewsletter() {
         return this.preferences.newsletter && this.isActive;
     }
 
-    // Convertir a JSON para guardar
+
     toJSON() {
         return {
             id: this.id,
@@ -116,7 +114,7 @@ export class User {
         };
     }
 
-    // Convertir a JSON público (sin datos sensibles)
+
     toPublicJSON() {
         return {
             id: this.id,
@@ -131,54 +129,126 @@ export class User {
         };
     }
 
-    // Crear usuario desde JSON
+
     static fromJSON(data) {
         return new User(data);
     }
 
-    // Validación de datos de usuario
-    static validateUserData(userData) {
+
+    static validateUserData(userData, options = {}) {
         const errors = [];
-
-        if (!userData.firstName || userData.firstName.trim().length < 2) {
+        const { isUpdate = false, checkEmail = true, checkPassword = true } = options;
+        
+        if (!userData.firstName || typeof userData.firstName !== 'string' || userData.firstName.trim().length < 2) {
             errors.push('El nombre debe tener al menos 2 caracteres');
+        } else if (userData.firstName.trim().length > 50) {
+            errors.push('El nombre no puede tener más de 50 caracteres');
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(userData.firstName.trim())) {
+            errors.push('El nombre solo puede contener letras y espacios');
         }
-
-        if (!userData.lastName || userData.lastName.trim().length < 2) {
+        
+        if (!userData.lastName || typeof userData.lastName !== 'string' || userData.lastName.trim().length < 2) {
             errors.push('El apellido debe tener al menos 2 caracteres');
+        } else if (userData.lastName.trim().length > 50) {
+            errors.push('El apellido no puede tener más de 50 caracteres');
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(userData.lastName.trim())) {
+            errors.push('El apellido solo puede contener letras y espacios');
         }
-
-        if (!userData.email || !this.isValidEmail(userData.email)) {
-            errors.push('El correo electrónico no es válido');
+        
+        if (checkEmail) {
+            if (!userData.email || !User.isValidEmail(userData.email)) {
+                errors.push('El email no es válido');
+            } else if (userData.email.length > 100) {
+                errors.push('El email no puede tener más de 100 caracteres');
+            }
         }
-
-        if (!userData.password || userData.password.length < 8) {
-            errors.push('La contraseña debe tener al menos 8 caracteres');
+        
+        if (checkPassword && !isUpdate) {
+            if (!userData.password || userData.password.length < 6) {
+                errors.push('La contraseña debe tener al menos 6 caracteres');
+            } else if (userData.password.length > 128) {
+                errors.push('La contraseña no puede tener más de 128 caracteres');
+            } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(userData.password)) {
+                errors.push('La contraseña debe contener al menos una letra minúscula, una mayúscula y un número');
+            }
         }
-
-        if (userData.phone && !this.isValidPhone(userData.phone)) {
-            errors.push('El número de teléfono no es válido');
+        
+        if (userData.phone) {
+            if (!User.isValidPhone(userData.phone)) {
+                errors.push('El número de teléfono no es válido');
+            }
         }
-
+        
         return {
             isValid: errors.length === 0,
-            errors
+            errors: errors,
+            sanitizedData: {
+                firstName: userData.firstName?.trim(),
+                lastName: userData.lastName?.trim(),
+                email: userData.email?.toLowerCase().trim(),
+                phone: userData.phone?.trim(),
+                ...(userData.password && { password: userData.password })
+            }
         };
     }
 
-    // Validar correo electrónico
+
+    static validateProfileUpdate(userData, currentUser) {
+        const validation = User.validateUserData(userData, { 
+            isUpdate: true, 
+            checkPassword: false,
+            checkEmail: userData.email !== currentUser.email 
+        });
+        
+        if (userData.email && userData.email !== currentUser.email) {
+        }
+        
+        return validation;
+    }
+
+
+    static validatePasswordChange(currentPassword, newPassword, confirmPassword) {
+        const errors = [];
+        
+        if (!currentPassword) {
+            errors.push('La contraseña actual es requerida');
+        }
+        
+        if (!newPassword || newPassword.length < 6) {
+            errors.push('La nueva contraseña debe tener al menos 6 caracteres');
+        } else if (newPassword.length > 128) {
+            errors.push('La nueva contraseña no puede tener más de 128 caracteres');
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword)) {
+            errors.push('La nueva contraseña debe contener al menos una letra minúscula, una mayúscula y un número');
+        }
+        
+        if (newPassword !== confirmPassword) {
+            errors.push('Las contraseñas no coinciden');
+        }
+        
+        if (currentPassword === newPassword) {
+            errors.push('La nueva contraseña debe ser diferente a la actual');
+        }
+        
+        return {
+            isValid: errors.length === 0,
+            errors: errors
+        };
+    }
+
+
     static isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
 
-    // Validar número de teléfono
+
     static isValidPhone(phone) {
         const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
         return phoneRegex.test(phone.replace(/\s/g, ''));
     }
 
-    // Buscar usuarios por texto
+
     static searchUsers(users, query) {
         const searchTerm = query.toLowerCase();
         return users.filter(user =>
@@ -188,12 +258,12 @@ export class User {
         );
     }
 
-    // Filtrar usuarios por nivel de actividad
+
     static filterUsersByActivity(users, activityLevel) {
         return users.filter(user => user.getActivityLevel() === activityLevel);
     }
 
-    // Ordenar usuarios por campo y orden
+
     static sortUsers(users, sortBy = 'name', order = 'asc') {
         return users.sort((a, b) => {
             let aValue, bValue;

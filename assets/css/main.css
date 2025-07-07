@@ -21,6 +21,7 @@
 /* Páginas */
 @import 'pages/auth.css';
 @import 'pages/profile.css';
+@import 'pages/custom-registration.css';
 
 /* Sidebar Dashboard */
 .sidebar-dashboard {
@@ -454,6 +455,23 @@ body {
 .tab-button:focus {
     outline: 2px solid #2563eb;
     outline-offset: 2px;
+}
+
+/* Estilo específico para el enlace de todas las inscripciones */
+.tab-button[href] {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tab-button[href]:hover {
+    color: #374151;
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.tab-button[href] svg {
+    flex-shrink: 0;
 }
 
 /* Filtros */

@@ -1,4 +1,3 @@
-// Modal Manager Component - Redesigned
 import { formatDate, formatPrice } from '../utils/helpers.js';
 
 export class ModalManager {
@@ -13,13 +12,11 @@ export class ModalManager {
     }
 
     setupEventListeners() {
-        // Close modal buttons
         const closeButtons = document.querySelectorAll('[id^="close-"], [id$="-close-btn"]');
         closeButtons.forEach(button => {
             button.addEventListener('click', () => this.closeActiveModal());
         });
 
-        // Modal overlay clicks
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
                 this.closeActiveModal();
@@ -44,7 +41,6 @@ export class ModalManager {
     }
 
     populateEventModal(event, isRegistered, authManager) {
-        // Update modal content
         this.updateModalElement('modal-title', event.name);
         this.updateModalElement('modal-description', event.description);
         this.updateModalElement('modal-category', event.category);
@@ -53,14 +49,12 @@ export class ModalManager {
         this.updateModalElement('modal-organizer', event.organizer);
         this.updateModalElement('modal-price', formatPrice(event.price));
 
-        // Update image
         const modalImage = document.getElementById('modal-image');
         if (modalImage) {
             modalImage.src = event.image;
             modalImage.alt = event.name;
         }
 
-        // Update capacity info
         const capacityElement = document.getElementById('modal-capacity');
         const progressElement = document.getElementById('modal-progress');
         
@@ -73,16 +67,13 @@ export class ModalManager {
             progressElement.style.width = `${progressPercentage}%`;
         }
 
-        // Update registration badge
         const registeredBadge = document.getElementById('modal-registered');
         if (registeredBadge) {
             registeredBadge.style.display = isRegistered ? 'inline-block' : 'none';
         }
 
-        // Update action button
         this.updateActionButton(event, isRegistered, authManager);
 
-        // Update alerts
         this.updateModalAlerts(event, isRegistered);
     }
 
@@ -168,7 +159,6 @@ export class ModalManager {
             return;
         }
 
-        // Emit registration event
         const event = new CustomEvent('registerForEvent', {
             detail: { eventId }
         });
@@ -180,7 +170,6 @@ export class ModalManager {
             return;
         }
 
-        // Emit unregistration event
         const event = new CustomEvent('unregisterFromEvent', {
             detail: { eventId }
         });
@@ -196,16 +185,13 @@ export class ModalManager {
         modal.style.display = 'flex';
         modal.setAttribute('aria-hidden', 'false');
 
-        // Prevent body scroll
         document.body.style.overflow = 'hidden';
 
-        // Focus management
         const firstFocusable = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
         if (firstFocusable) {
             setTimeout(() => firstFocusable.focus(), 100);
         }
 
-        // Add backdrop blur
         modal.classList.add('modal-backdrop');
     }
 
@@ -221,7 +207,6 @@ export class ModalManager {
             modal.setAttribute('aria-hidden', 'true');
         }, 300);
 
-        // Restore body scroll
         document.body.style.overflow = '';
         
         if (this.activeModal === modalId) {
@@ -242,7 +227,6 @@ export class ModalManager {
         }
     }
 
-    // Animation helpers
     animateModalEntry(modal) {
         const content = modal.querySelector('.modal-content');
         if (content) {

@@ -1,4 +1,3 @@
-// Constantes de la aplicación 
 export const APP_CONFIG = {
     name: 'EventHub',
     version: '2.0.0',
@@ -12,7 +11,7 @@ export const STORAGE_KEYS = {
     preferences: 'eventhub_preferences'
 };
 
-export const SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // Formato de 24 horas
+export const SESSION_TIMEOUT = 24 * 60 * 60 * 1000;
 
 export const NOTIFICATION_TYPES = {
     SUCCESS: 'success',

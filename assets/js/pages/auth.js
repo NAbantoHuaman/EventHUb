@@ -1,52 +1,46 @@
-// JavaScript para páginas de autenticación 
-import { AuthManager } from '../components/AuthManager.js';
-import { NotificationManager } from '../components/NotificationManager.js';
+import { BasePageManager } from '../components/BasePageManager.js';
 import { getPasswordStrength } from '../utils/helpers.js';
 
-class AuthPageManager {
+class AuthPageManager extends BasePageManager {
     constructor() {
-        this.authManager = new AuthManager();
-        this.notificationManager = new NotificationManager();
-        this.init();
+        super();
     }
-
-    init() {
-        this.checkRedirection();
+    requiresAuth() {
+        return false;
+    }
+    async loadPageData() {
+    }
+    updateUI() {
+    }
+    async onPageReady() {
+        this.checkExistingAuth();
         this.setupEventListeners();
         this.setupPasswordStrength();
     }
-
-    // Redirige si el usuario ya está autenticado
-    checkRedirection() {
+    checkExistingAuth() {
         const currentPage = window.location.pathname;
         const isAuthPage = currentPage.includes('login.html') || currentPage.includes('register.html');
         
         if (this.authManager.currentUser && isAuthPage) {
-            // Usuario autenticado, redirigir a la app principal
             window.location.href = 'index.html';
         }
     }
 
-    // Configura los listeners de los formularios
     setupEventListeners() {
-        // Formulario de login
         const loginForm = document.getElementById('login-form');
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => this.handleLogin(e));
             
-            // Mostrar/ocultar contraseña
             const togglePassword = document.getElementById('toggle-password');
             if (togglePassword) {
                 togglePassword.addEventListener('click', () => this.togglePasswordVisibility('password'));
             }
         }
         
-        // Formulario de registro
         const registerForm = document.getElementById('register-form');
         if (registerForm) {
             registerForm.addEventListener('submit', (e) => this.handleRegister(e));
             
-            // Mostrar/ocultar contraseñas
             const togglePassword = document.getElementById('toggle-password');
             const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
             
@@ -59,7 +53,6 @@ class AuthPageManager {
         }
     }
 
-    // Configura la barra de fuerza de contraseña
     setupPasswordStrength() {
         const passwordInput = document.getElementById('password');
         if (passwordInput) {
@@ -67,7 +60,6 @@ class AuthPageManager {
         }
     }
 
-    // Maneja el login
     async handleLogin(e) {
         e.preventDefault();
         
@@ -79,7 +71,6 @@ class AuthPageManager {
         
         console.log('🔄 AuthPageManager: Intento de login para:', email);
         
-        // Estado de carga en el botón
         const submitBtn = form.querySelector('button[type="submit"]');
         this.setButtonLoading(submitBtn, true);
         
@@ -93,7 +84,6 @@ class AuthPageManager {
                     `¡Bienvenido de vuelta, ${result.user.firstName}!`
                 );
                 
-                // Redirigir a la app principal
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 1000);
@@ -108,13 +98,10 @@ class AuthPageManager {
         }
     }
 
-    // Maneja el registro
     async handleRegister(e) {
         e.preventDefault();
-        
         const form = e.target;
         const formData = new FormData(form);
-        
         const userData = {
             firstName: formData.get('firstName'),
             lastName: formData.get('lastName'),
@@ -122,25 +109,20 @@ class AuthPageManager {
             phone: formData.get('phone'),
             password: formData.get('password')
         };
-        
         const confirmPassword = formData.get('confirmPassword');
-        
         console.log('🔄 AuthPageManager: Intento de registro para:', userData.email);
         
-        // Validar que las contraseñas coincidan
         if (userData.password !== confirmPassword) {
             this.notificationManager.error('Las contraseñas no coinciden');
             return;
         }
         
-        // Validar aceptación de términos
         const termsCheckbox = document.getElementById('terms');
         if (!termsCheckbox || !termsCheckbox.checked) {
             this.notificationManager.error('Debes aceptar los términos y condiciones');
             return;
         }
         
-        // Estado de carga en el botón
         const submitBtn = form.querySelector('button[type="submit"]');
         this.setButtonLoading(submitBtn, true);
         
@@ -154,7 +136,6 @@ class AuthPageManager {
                     '¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.'
                 );
                 
-                // Redirigir a login
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 2000);
@@ -168,13 +149,10 @@ class AuthPageManager {
             this.setButtonLoading(submitBtn, false);
         }
     }
-
-    // Alterna la visibilidad de la contraseña
     togglePasswordVisibility(inputId) {
         const input = document.getElementById(inputId);
         let button;
         
-        // Selección del botón correspondiente
         if (inputId === 'password') {
             button = document.getElementById('toggle-password');
         } else if (inputId === 'confirmPassword') {
@@ -201,8 +179,6 @@ class AuthPageManager {
             `;
         }
     }
-
-    // Actualiza la barra de fuerza de contraseña
     updatePasswordStrength() {
         const passwordInput = document.getElementById('password');
         const strengthFill = document.getElementById('strength-fill');
@@ -215,8 +191,6 @@ class AuthPageManager {
         strengthFill.className = `strength-fill ${strength.class}`;
         strengthText.textContent = strength.text;
     }
-
-    // Cambia el estado de carga de un botón
     setButtonLoading(button, loading) {
         if (!button) return;
         
@@ -237,7 +211,6 @@ class AuthPageManager {
     }
 }
 
-// Inicializa cuando el DOM está listo
 document.addEventListener('DOMContentLoaded', () => {
     window.authPageManager = new AuthPageManager();
 });

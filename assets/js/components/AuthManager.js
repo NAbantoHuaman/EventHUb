@@ -1,20 +1,28 @@
-// Gestor de Autenticación 
 import { User } from './User.js';
 import { UserStorage, SessionStorage } from '../utils/storage.js';
 import { RegistrationManager } from '../utils/RegistrationManager.js';
 import { SESSION_TIMEOUT } from '../utils/constants.js';
-import { validateEmail, validatePassword, getPasswordStrength } from '../utils/helpers.js';
+import { getPasswordStrength } from '../utils/helpers.js';
+import { BaseManager } from './BaseManager.js';
 
-export class AuthManager {
+export class AuthManager extends BaseManager {
     constructor() {
+        super('AuthManager');
         this.currentUser = null;
-        this.users = this.loadUsers();
+        this.users = [];
         this.sessionTimeout = SESSION_TIMEOUT;
         this.registrationManager = new RegistrationManager();
-        this.init();
     }
 
-    init() {
+
+    async setup() {
+        this.addDependency('UserStorage');
+        this.addDependency('SessionStorage');
+    }
+
+
+    async postInitialize() {
+        this.users = this.loadUsers();
         this.checkSession();
         this.setupSessionTimeout();
     }
@@ -78,7 +86,7 @@ export class AuthManager {
                 console.log('ℹ️ AuthManager: No se encontró una sesión válida');
             }
             
-            // Sesión expirada o inválida
+
             this.clearSession();
             return false;
         } catch (error) {
@@ -93,11 +101,11 @@ export class AuthManager {
         
         console.log('🔄 AuthManager: Sincronizando registros de usuario...');
         
-        // Obtener registros desde RegistrationManager
+
         const registrations = this.registrationManager.getUserRegistrations(this.currentUser.id);
         console.log('📊 AuthManager: Registros encontrados en RegistrationManager:', registrations.length);
         
-        // Guardar en el objeto usuario para compatibilidad
+
         this.currentUser.eventsRegistered = registrations;
         
         console.log('✅ AuthManager: Registros de usuario sincronizados');
@@ -109,14 +117,12 @@ export class AuthManager {
     }
 
     setupSessionTimeout() {
-        // Extender sesión en actividad del usuario
         const extendSession = () => {
             if (this.currentUser) {
                 SessionStorage.extendSession();
             }
         };
 
-        // Escuchar actividad del usuario
         ['click', 'keypress', 'scroll', 'mousemove'].forEach(event => {
             document.addEventListener(event, extendSession, { passive: true });
         });
@@ -126,13 +132,11 @@ export class AuthManager {
         try {
             console.log('🔄 AuthManager: Registrando usuario:', userData.email);
             
-            // Validar datos del usuario
             const validation = User.validateUserData(userData);
             if (!validation.isValid) {
                 throw new Error(validation.errors[0]);
             }
 
-            // Verificar si el correo ya existe
             const existingUser = this.users.find(user => 
                 user.email.toLowerCase() === userData.email.toLowerCase()
             );
@@ -141,7 +145,6 @@ export class AuthManager {
                 throw new Error('Ya existe una cuenta con este correo electrónico');
             }
 
-            // Crear nuevo usuario
             const newUser = new User(userData);
             console.log('✅ AuthManager: Usuario creado:', newUser.getFullName());
             
@@ -164,11 +167,9 @@ export class AuthManager {
         try {
             console.log('🔄 AuthManager: Intento de inicio de sesión para:', email);
             
-            // ✅ CRÍTICO: Siempre recargar usuarios desde almacenamiento antes de iniciar sesión
             this.users = this.loadUsers();
             console.log('✅ AuthManager: Usuarios recargados desde almacenamiento:', this.users.length);
             
-            // Buscar usuario por correo
             const user = this.users.find(u => 
                 u.email.toLowerCase() === email.toLowerCase() && u.isActive
             );
@@ -177,12 +178,10 @@ export class AuthManager {
                 throw new Error('Correo electrónico o contraseña incorrectos');
             }
 
-            // Verificar contraseña (en producción, esto usaría hash adecuado)
             if (user.password !== password) {
                 throw new Error('Correo electrónico o contraseña incorrectos');
             }
 
-            // Actualizar último acceso
             user.updateLastLogin();
             this.currentUser = user;
             
@@ -206,7 +205,7 @@ export class AuthManager {
         this.clearSession();
         this.currentUser = null;
         
-        // Redirigir a la página de login si no está ya ahí
+        
         if (!window.location.pathname.includes('login.html')) {
             window.location.href = 'login.html';
         }
@@ -221,21 +220,28 @@ export class AuthManager {
                 throw new Error('Usuario no encontrado');
             }
 
-            // Validar correo si se está actualizando
-            if (updates.email && updates.email !== this.users[userIndex].email) {
-                if (!validateEmail(updates.email)) {
-                    throw new Error('El formato del correo electrónico no es válido');
+    
+            if (updates.email || updates.firstName || updates.lastName || updates.phone) {
+                const validation = User.validateProfileUpdate(updates, this.users[userIndex]);
+                if (!validation.isValid) {
+                    throw new Error(validation.errors[0]);
                 }
                 
-                if (this.users.find(u => u.email.toLowerCase() === updates.email.toLowerCase() && u.id !== userId)) {
-                    throw new Error('Ya existe una cuenta con este correo electrónico');
+        
+                if (updates.email && updates.email !== this.users[userIndex].email) {
+                    if (this.users.find(u => u.email.toLowerCase() === updates.email.toLowerCase() && u.id !== userId)) {
+                        throw new Error('Ya existe una cuenta con este correo electrónico');
+                    }
                 }
+                
+        
+                Object.assign(updates, validation.sanitizedData);
             }
 
-            // Actualizar datos del usuario
+    
             Object.assign(this.users[userIndex], updates);
             
-            // Actualizar usuario actual si es el mismo
+    
             if (this.currentUser && this.currentUser.id === userId) {
                 Object.assign(this.currentUser, updates);
                 console.log('✅ AuthManager: Objeto usuario actual actualizado');
@@ -261,17 +267,18 @@ export class AuthManager {
                 throw new Error('Usuario no encontrado');
             }
 
-            // Verificar contraseña actual
+    
             if (user.password !== currentPassword) {
                 throw new Error('La contraseña actual es incorrecta');
             }
 
-            // Validar nueva contraseña
-            if (!validatePassword(newPassword)) {
-                throw new Error('La nueva contraseña debe tener al menos 8 caracteres');
+    
+            const validation = User.validatePasswordChange(currentPassword, newPassword, newPassword);
+            if (!validation.isValid) {
+                throw new Error(validation.errors[0]);
             }
 
-            // Actualizar contraseña
+    
             user.password = newPassword;
             this.saveUsers();
 
@@ -288,11 +295,11 @@ export class AuthManager {
                 throw new Error('Usuario no encontrado');
             }
 
-            // Eliminar usuario
+    
             this.users.splice(userIndex, 1);
             this.saveUsers();
 
-            // Si se elimina el usuario actual, cerrar sesión
+    
             if (this.currentUser && this.currentUser.id === userId) {
                 this.logout();
             }
@@ -356,12 +363,32 @@ export class AuthManager {
         };
     }
 
-    // Utilidades de contraseña
+
+    validate(data) {
+        if (!super.validate(data)) return false;
+        
+        if (data.email) {
+            return this.isValidEmail(data.email);
+        }
+        
+        if (data.username && data.password) {
+            return data.username.length >= 3 && data.password.length >= 6;
+        }
+        
+        return true;
+    }
+
+
+    isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+
     getPasswordStrength(password) {
         return getPasswordStrength(password);
     }
 
-    // Utilidades de sesión
     extendSession() {
         if (this.currentUser) {
             SessionStorage.extendSession();
@@ -377,7 +404,7 @@ export class AuthManager {
         return Math.max(0, remaining);
     }
 
-    isSessionExpiringSoon(threshold = 5 * 60 * 1000) { // 5 minutos
+    isSessionExpiringSoon(threshold = 5 * 60 * 1000) {
         const remaining = this.getSessionTimeRemaining();
         return remaining > 0 && remaining <= threshold;
     }
@@ -450,15 +477,13 @@ export class AuthManager {
         return registrations;
     }
 
-    // Métodos heredados para compatibilidad
+
     markEventAttended(eventId) {
-        // Esto se implementaría en un sistema de asistencia separado
         console.log('ℹ️ AuthManager: markEventAttended llamado para:', eventId);
         return true;
     }
 
     hasUserAttendedEvent(eventId) {
-        // Esto se implementaría en un sistema de asistencia separado
         return false;
     }
 
@@ -475,7 +500,6 @@ export class AuthManager {
             console.log('📊 AuthManager: No hay usuario actual');
         }
         
-        // Depurar gestor de registros
         this.registrationManager.debugRegistrations();
     }
 }

@@ -1,4 +1,3 @@
-// Componente Gestor de Interfaz de Usuario
 import { createElement, addClass, removeClass, toggleClass } from '../utils/helpers.js';
 import { formatDate, formatPrice } from '../utils/helpers.js';
 
@@ -8,7 +7,7 @@ export class UIManager {
         this.activeTab = 'all';
     }
 
-    // Crear tarjeta de evento
+
     createEventCard(event, isRegistered = false) {
         console.log(`🎨 UIManager: Creando tarjeta para el evento "${event.name}" (${event.id})`);
         console.log(`📊 UIManager: parámetro isRegistered: ${isRegistered}`);
@@ -133,11 +132,10 @@ export class UIManager {
         return cardHtml;
     }
 
-    // Gestión de pestañas
+
     switchTab(tabName) {
         this.activeTab = tabName;
         
-        // Actualizar botones de pestañas
         const tabButtons = document.querySelectorAll('.tab-button');
         tabButtons.forEach(button => {
             button.classList.toggle('active', button.dataset.tab === tabName);
@@ -146,7 +144,7 @@ export class UIManager {
         return tabName;
     }
 
-    // Actualización de filtros en la interfaz
+
     updateFilterOptions(categories, locations) {
         this.updateCategoryFilter(categories);
         this.updateLocationFilter(locations);
@@ -178,37 +176,33 @@ export class UIManager {
         }
     }
 
-    // Actualización de estadísticas
+
     updateStats(stats) {
         this.updateElement('total-events', stats.total);
         this.updateElement('available-events', stats.available);
         this.updateElement('categories-count', stats.categories);
     }
 
-    // Actualización de contadores con animación
+
     updateCounts(allCount, registeredCount, filteredCount) {
         console.log('📊 UIManager: Actualizando contadores:', { allCount, registeredCount, filteredCount });
         
-        // Actualizar contadores de pestañas con animación
         this.animateCountUpdate('all-count', allCount);
         this.animateCountUpdate('registered-count', registeredCount);
         
-        // Actualizar contador de eventos encontrados
         this.updateElement('events-found', `${filteredCount} eventos encontrados`);
     }
 
-    // Animar actualización de contadores
+
     animateCountUpdate(elementId, newValue) {
         const element = document.getElementById(elementId);
         if (!element) return;
         
         const currentValue = parseInt(element.textContent) || 0;
         
-        // Solo animar si el valor cambió
         if (currentValue !== newValue) {
             console.log(`🎬 UIManager: Animando ${elementId} de ${currentValue} a ${newValue}`);
             
-            // Agregar animación de pulso
             element.style.transform = 'scale(1.2)';
             element.style.transition = 'transform 0.2s ease, color 0.2s ease';
             element.style.color = 'var(--primary-600)';
@@ -227,7 +221,7 @@ export class UIManager {
         }
     }
 
-    // Métodos utilitarios
+
     updateElement(id, content) {
         const element = document.getElementById(id);
         if (element) {
@@ -257,7 +251,7 @@ export class UIManager {
         }
     }
 
-    // Estados de carga
+
     setButtonLoading(button, loading) {
         if (!button) return;
         
@@ -270,7 +264,7 @@ export class UIManager {
         }
     }
 
-    // Estados vacíos
+
     showEmptyState(container, title, message, showButton = false) {
         if (!container) return;
         
@@ -289,7 +283,7 @@ export class UIManager {
         `;
     }
 
-    // Ayudantes de animación
+
     fadeIn(element, duration = 300) {
         if (!element) return;
         

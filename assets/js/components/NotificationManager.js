@@ -1,15 +1,28 @@
-// Componente Gestor de Notificaciones - Rediseñado
 import { NOTIFICATION_TYPES } from '../utils/constants.js';
 import { createElement } from '../utils/helpers.js';
+import { BaseManager } from './BaseManager.js';
+import { NotificationFactory } from './NotificationTypes.js';
 
-export class NotificationManager {
+export class NotificationManager extends BaseManager {
     constructor() {
+        super('NotificationManager');
         this.notifications = [];
-        this.container = this.createContainer();
+        this.container = null;
         this.maxNotifications = 5;
+        this.defaultDuration = 5000;
     }
 
-    // Crear el contenedor de notificaciones en el DOM
+    async setup() {
+        this.container = this.createContainer();
+    }
+
+    validate(notification) {
+        if (!super.validate(notification)) return false;
+        
+        return typeof notification.message === 'string' && 
+               notification.message.trim().length > 0;
+    }
+
     createContainer() {
         let container = document.getElementById('notifications');
         if (!container) {
@@ -20,7 +33,6 @@ export class NotificationManager {
         return container;
     }
 
-    // Agregar una notificación
     addNotification(message, type = NOTIFICATION_TYPES.INFO, duration = 5000, actions = null) {
         const id = Math.random().toString(36).substr(2, 9);
         const notification = { id, message, type, duration, actions };
@@ -28,7 +40,6 @@ export class NotificationManager {
         this.notifications.push(notification);
         this.renderNotification(notification);
 
-        // Eliminar las notificaciones más antiguas si se supera el límite
         if (this.notifications.length > this.maxNotifications) {
             const oldestId = this.notifications[0].id;
             this.removeNotification(oldestId);
@@ -43,28 +54,86 @@ export class NotificationManager {
         return id;
     }
 
-    // Eliminar una notificación por ID
     removeNotification(id) {
-        this.notifications = this.notifications.filter(n => n.id !== id);
-        const element = document.getElementById(`notification-${id}`);
-        if (element) {
-            element.classList.add('slide-out');
-            setTimeout(() => {
-                if (element.parentNode) {
-                    element.parentNode.removeChild(element);
+        const index = this.notifications.findIndex(notification => notification.id === id);
+        if (index !== -1) {
+            const notification = this.notifications[index];
+            if (typeof notification.hide === 'function') {
+                notification.hide().catch(error => {
+                    console.error('Error ocultando notificación:', error);
+                });
+            } else {
+                const element = document.getElementById(`notification-${id}`);
+                if (element) {
+                    element.classList.add('slide-out');
+                    setTimeout(() => {
+                        if (element.parentNode) {
+                            element.parentNode.removeChild(element);
+                        }
+                    }, 300);
                 }
-            }, 300);
+            }
+            this.notifications.splice(index, 1);
+            
+            console.log(`🗑️ NotificationManager: Notificación removida:`, notification.message);
+            return true;
+        }
+        return false;
+    }
+
+    remove(id) {
+        return this.removeNotification(id);
+    }
+
+    removeOldest() {
+        if (this.notifications.length > 0) {
+            const oldest = this.notifications[0];
+            this.remove(oldest.id);
         }
     }
 
-    // Eliminar todas las notificaciones
+
+    removeAll() {
+        const notificationsToRemove = [...this.notifications];
+        
+        notificationsToRemove.forEach(notification => {
+            this.remove(notification.id);
+        });
+        
+        console.log('🧹 NotificationManager: Todas las notificaciones removidas');
+    }
+
+
+    getStats() {
+        const stats = {
+            total: this.notifications.length,
+            byType: {}
+        };
+        
+        this.notifications.forEach(notification => {
+            const type = notification.type || 'unknown';
+            stats.byType[type] = (stats.byType[type] || 0) + 1;
+        });
+        
+        return stats;
+    }
+
+
+    getStatus() {
+        return {
+            ...super.getStatus(),
+            ...this.getStats(),
+            maxNotifications: this.maxNotifications,
+            defaultDuration: this.defaultDuration
+        };
+    }
+
     removeAllNotifications() {
         this.notifications.forEach(notification => {
             this.removeNotification(notification.id);
         });
     }
 
-    // Renderizar una notificación en el DOM
     renderNotification(notification) {
         const notificationElement = createElement('div', `notification notification-${notification.type}`);
         notificationElement.id = `notification-${notification.id}`;
@@ -108,7 +177,6 @@ export class NotificationManager {
 
         this.container.appendChild(notificationElement);
 
-        // Agregar manejador de clic para las acciones
         if (notification.actions) {
             notification.actions.forEach((action, index) => {
                 const actionButton = notificationElement.querySelector(`.notification-action:nth-child(${index + 1})`);
@@ -122,7 +190,6 @@ export class NotificationManager {
         }
     }
 
-    // Obtener el ícono según el tipo de notificación
     getIcon(type) {
         switch (type) {
             case NOTIFICATION_TYPES.SUCCESS:
@@ -151,29 +218,50 @@ export class NotificationManager {
         }
     }
 
-    // Métodos de conveniencia para mostrar notificaciones rápidas
-    success(message, duration = 5000, actions = null) {
-        return this.addNotification(message, NOTIFICATION_TYPES.SUCCESS, duration, actions);
+    success(message, options = {}) {
+        const notification = NotificationFactory.create('success', message, options);
+        return this.addNotificationObject(notification);
     }
 
-    error(message, duration = 7000, actions = null) {
-        return this.addNotification(message, NOTIFICATION_TYPES.ERROR, duration, actions);
+    error(message, options = {}) {
+        const notification = NotificationFactory.create('error', message, options);
+        return this.addNotificationObject(notification);
     }
 
-    info(message, duration = 5000, actions = null) {
-        return this.addNotification(message, NOTIFICATION_TYPES.INFO, duration, actions);
+    info(message, options = {}) {
+        const notification = NotificationFactory.create('info', message, options);
+        return this.addNotificationObject(notification);
     }
 
-    warning(message, duration = 6000, actions = null) {
-        return this.addNotification(message, NOTIFICATION_TYPES.WARNING, duration, actions);
+    warning(message, options = {}) {
+        const notification = NotificationFactory.create('warning', message, options);
+        return this.addNotificationObject(notification);
     }
 
-    // Notificación persistente (no se cierra automáticamente)
-    persistent(message, type = NOTIFICATION_TYPES.INFO, actions = null) {
-        return this.addNotification(message, type, 0, actions);
+    persistent(message, type = 'info', options = {}) {
+        const notification = NotificationFactory.create(type, message, {
+            persistent: true,
+            ...options
+        });
+        return this.addNotificationObject(notification);
     }
 
-    // Actualizar una notificación existente
+    addNotificationObject(notification) {
+        if (this.notifications.length >= this.maxNotifications) {
+            this.removeOldest();
+        }
+
+        this.notifications.push(notification);
+
+        notification.show().catch(error => {
+            console.error('Error mostrando notificación:', error);
+            this.remove(notification.id);
+        });
+
+        console.log(`📢 NotificationManager: Notificación ${notification.type} agregada:`, notification.message);
+        return notification.id;
+    }
+
     updateNotification(id, message, type = null) {
         const notification = this.notifications.find(n => n.id === id);
         if (notification) {
@@ -194,7 +282,6 @@ export class NotificationManager {
         }
     }
 
-    // Obtener el número de notificaciones por tipo
     getNotificationCount(type = null) {
         if (type) {
             return this.notifications.filter(n => n.type === type).length;
@@ -202,12 +289,10 @@ export class NotificationManager {
         return this.notifications.length;
     }
 
-    // Verificar si las notificaciones del navegador están soportadas
     static isSupported() {
         return 'Notification' in window;
     }
 
-    // Solicitar permiso para notificaciones del navegador
     static async requestPermission() {
         if (this.isSupported()) {
             const permission = await Notification.requestPermission();
@@ -216,7 +301,6 @@ export class NotificationManager {
         return false;
     }
 
-    // Mostrar una notificación del navegador
     static showBrowserNotification(title, options = {}) {
         if (this.isSupported() && Notification.permission === 'granted') {
             return new Notification(title, {
